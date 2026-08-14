@@ -1,3 +1,0 @@
-# Prevent Apache from serving a stale dev index.html from the project root.
-# cPanel Node.js should proxy all traffic to server.cjs (see Setup Node.js App).
-Options -Indexes
