@@ -1,7 +1,7 @@
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -15,22 +15,19 @@ export default defineConfig({
     },
   },
   resolve: {
-    tsconfigPaths: true,
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+    },
   },
   plugins: [
     tailwindcss(),
-    tanstackStart({
-      srcDirectory: "src",
-      server: { entry: "server" },
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
     }),
     viteReact(),
-    nitro({
-      devProxy: {
-        "/api": {
-          target: "http://localhost:4000",
-          changeOrigin: true,
-        },
-      },
-    }),
   ],
+  build: {
+    outDir: "dist",
+  },
 });

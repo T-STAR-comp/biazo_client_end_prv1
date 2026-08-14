@@ -1,0 +1,1 @@
+import{m as e}from"./format-BlFT4uz9.js";function t(t){return+e(t)<Date.now()}export{t};
