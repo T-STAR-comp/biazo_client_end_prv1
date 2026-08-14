@@ -7,9 +7,11 @@ const express = require("express");
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 const distDir = path.join(__dirname, "dist");
-const indexPath = path.join(distDir, "index.html");
+const indexPath = [path.join(distDir, "index.html"), path.join(distDir, "index.vite.html")].find((p) =>
+  fs.existsSync(p),
+);
 
-if (!fs.existsSync(indexPath)) {
+if (!indexPath) {
   console.error("Missing frontend build. Run `npm run build` before starting the app.");
   process.exit(1);
 }

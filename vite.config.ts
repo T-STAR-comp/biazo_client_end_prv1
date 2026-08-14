@@ -29,5 +29,10 @@ export default defineConfig({
   ],
   build: {
     outDir: "dist",
+    rollupOptions: {
+      input: {
+        index: path.resolve(__dirname, "index.vite.html"),
+      },
+    },
   },
 });

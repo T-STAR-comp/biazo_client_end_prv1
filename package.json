@@ -4,8 +4,8 @@
   "sideEffects": false,
   "main": "server.cjs",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite index.vite.html",
+    "build": "vite build && node -e \"const fs=require('fs');const s='dist/index.vite.html';if(fs.existsSync(s))fs.copyFileSync(s,'dist/index.html')\"",
     "build:dev": "vite build --mode development",
     "start": "node server.cjs",
     "preview": "node server.cjs",
