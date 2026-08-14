@@ -13,8 +13,9 @@ import { addMinutes, format, isPast } from "date-fns";
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import type { Ticket as TicketType } from "@/lib/api";
+import { getApiBase } from "@/lib/runtime-config";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "/api";
+const API_BASE = getApiBase();
 
 function isTicketInactive(t: TicketType): boolean {
   if (t.isInactive || t.displayStatus === "inactive") return true;
