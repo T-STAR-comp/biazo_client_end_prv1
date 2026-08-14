@@ -1,0 +1,13 @@
+# Static hosting: document root is the client-end folder (not dist/).
+# Sends all traffic to the Vite build in dist/
+Options -Indexes
+
+RewriteEngine On
+RewriteBase /
+
+# Serve built assets and files from dist/ when they exist
+RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f
+RewriteRule ^(.+)$ dist/$1 [L]
+
+# SPA fallback (/, /dashboard, /auth, etc.)
+RewriteRule ^ dist/index.html [L]
