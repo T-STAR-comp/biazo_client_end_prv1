@@ -1,7 +1,9 @@
-# Copy to dist/.htaccess after build when using static hosting (document root = dist/).
-# Not needed when using Node.js startup file server.cjs with cPanel Passenger.
+# Copy to dist/.htaccess when document root points directly at dist/
 RewriteEngine On
 RewriteBase /
+
+RewriteRule ^api/ - [END]
+
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
