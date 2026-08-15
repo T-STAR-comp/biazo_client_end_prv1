@@ -4,6 +4,7 @@ import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useAuth } from "@/context/auth-context";
 import { parseApiError } from "@/lib/api";
+import { notify } from "@/lib/notify";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -75,8 +76,8 @@ function AuthPage() {
 
   const applyApiError = (err: unknown) => {
     const parsed = parseApiError(err);
-    setError(parsed.message);
     setFieldErrors(parsed.fieldErrors);
+    notify.error(parsed.message);
   };
 
   const handleCredentials = async (e: React.FormEvent) => {
@@ -127,7 +128,7 @@ function AuthPage() {
     setLoading(true);
     try {
       await resetPassword({ email, code, password: newPassword });
-      setSuccessMessage("Password updated. Sign in with your new password.");
+      notify.success("Password updated. Sign in with your new password.");
       setPassword("");
       setCode("");
       setNewPassword("");
@@ -208,32 +209,25 @@ function AuthPage() {
           <p className="mt-3 text-sm text-muted-foreground">{subheading}</p>
 
           {successMessage && (
-            <div
-              role="status"
-              className="mt-4 rounded-xl border border-signal/30 bg-signal-soft px-4 py-3 text-sm text-ink"
-            >
+            <div role="status" className="sr-only">
               {successMessage}
             </div>
           )}
 
-          {error && (
+          {Object.keys(fieldErrors).length > 0 && (
             <div
               role="alert"
               className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
             >
-              <p className="font-medium">{error}</p>
-              {Object.keys(fieldErrors).length > 0 && (
-                <ul className="mt-2 list-inside list-disc space-y-0.5 text-destructive/90">
-                  {Object.entries(fieldErrors).flatMap(([field, messages]) =>
-                    messages.map((message) => (
-                      <li key={`${field}-${message}`}>
-                        <span className="capitalize">{field.replace(/([A-Z])/g, " $1")}</span>:{" "}
-                        {message}
-                      </li>
-                    )),
-                  )}
-                </ul>
-              )}
+              <ul className="list-inside list-disc space-y-0.5">
+                {Object.entries(fieldErrors).flatMap(([field, messages]) =>
+                  messages.map((message) => (
+                    <li key={`${field}-${message}`}>
+                      <span className="capitalize">{field.replace(/([A-Z])/g, " $1")}</span>: {message}
+                    </li>
+                  )),
+                )}
+              </ul>
             </div>
           )}
 
@@ -242,11 +236,14 @@ function AuthPage() {
               <div className="mt-10">
                 <button
                   type="button"
-                  className="flex min-h-[48px] w-full items-center justify-center gap-3 rounded-xl border border-hairline bg-surface-elevated px-4 py-3 text-sm font-medium text-ink transition-colors hover:bg-secondary"
+                  disabled
+                  title="Google sign-in coming soon"
+                  className="btn-inert flex min-h-[48px] w-full items-center justify-center gap-3 rounded-xl border border-hairline bg-surface-elevated px-4 py-3 text-sm font-medium text-ink"
                 >
                   <GoogleMark />
                   Continue with Google
                 </button>
+                <p className="mt-2 text-center text-xs text-muted-foreground">Coming soon</p>
               </div>
 
               <div className="my-8 flex items-center gap-4 text-xs uppercase tracking-[0.16em] text-muted-foreground">

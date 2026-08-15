@@ -47,7 +47,7 @@ const sections = [
   },
   {
     h: "9. Contact",
-    p: `Questions about these Terms can be sent to legal@biazo.travel or to Biazo Traveling Agency, City Centre, Lilongwe, Malawi.`,
+    p: `Questions about these Terms can be sent to hello@biazo.net or to Biazo Traveling Agency, Lilongwe, Malawi. Phone: +265 995 43 54 70.`,
   },
 ];
 

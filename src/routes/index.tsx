@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ArrowUpRight, Compass, Leaf, Shield, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { FlightSearch } from "@/components/flight-search";
+import { HeroFlightPanel } from "@/components/hero-flight-panel";
 import { destinationImages, HERO_IMAGE } from "@/lib/destination-images";
 
 export const Route = createFileRoute("/")({
@@ -114,7 +114,7 @@ function Landing() {
       {/* HERO — image fills from top, header overlays */}
       <section className="relative overflow-hidden">
         <div className="relative w-full">
-          <div className="relative min-h-[min(100dvh,900px)] overflow-hidden bg-ink sm:min-h-[85vh] lg:min-h-[92vh]">
+          <div className="relative min-h-[100dvh] overflow-hidden bg-ink sm:min-h-[85vh] lg:min-h-[92vh]">
             <img
               src={HERO_IMAGE}
               alt="View from an airplane window over clouds at sunrise"
@@ -125,7 +125,7 @@ function Landing() {
 
             <SiteHeader overlay />
 
-            <div className="relative z-10 mx-auto flex min-h-[min(100dvh,900px)] max-w-6xl flex-col px-4 pt-20 pb-8 sm:min-h-[85vh] sm:px-6 sm:pt-24 lg:min-h-[92vh] lg:px-8">
+            <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-6xl flex-col px-4 pt-20 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:min-h-[85vh] sm:px-6 sm:pt-24 sm:pb-8 lg:min-h-[92vh] lg:px-8">
               <div className="max-w-2xl pt-1 sm:pt-4">
                 <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.04em] text-white sm:text-4xl sm:leading-[0.95] md:text-5xl lg:text-6xl">
                   Explore beyond
@@ -133,18 +133,18 @@ function Landing() {
                   the <span className="text-display text-signal">boundaries.</span>
                 </h1>
                 <p className="mt-3 max-w-lg text-sm text-white/85 sm:mt-4 sm:text-base">
-                  A traveling agency for people who fly with intention. Book flights,
-                  plan whole journeys, and let a human take care of the rest.
+                  A traveling agency for people who fly with intention. Apply for flights to
+                  any country — our team handles the rest from Lilongwe.
                 </p>
               </div>
 
-              <div className="mt-4 w-full sm:mt-8">
-                <FlightSearch
-                  countryOptions={countryOptions}
-                  selectedCountry={selectedCountry}
-                  onCountryChange={setSelectedCountryValue}
-                />
-              </div>
+              <div className="flex-1 sm:hidden" aria-hidden />
+
+              <HeroFlightPanel
+                countryOptions={countryOptions}
+                selectedCountry={selectedCountry}
+                onCountryChange={setSelectedCountryValue}
+              />
             </div>
           </div>
 
@@ -203,10 +203,10 @@ function Landing() {
         {/* Stats */}
         <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-hairline sm:mt-20 md:grid-cols-4">
           {[
-            ["124k", "Trips designed"],
-            ["87", "Countries served"],
-            ["4.94", "Traveller rating"],
-            ["<5 min", "Avg. reply time"],
+            ["Global", "Any country"],
+            ["Malawi", "Built in Lilongwe"],
+            ["Human", "Concierge support"],
+            ["Simple", "Apply online"],
           ].map(([n, l]) => (
             <div key={l} className="bg-background p-4 sm:p-8">
               <div className="text-2xl font-semibold tracking-[-0.03em] sm:text-4xl md:text-5xl">{n}</div>
@@ -303,75 +303,9 @@ function Landing() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="border-t border-hairline bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-          <div className="grid gap-10 sm:gap-16 md:grid-cols-[1fr_1.6fr] md:gap-20">
-            <div>
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-signal">
-                Traveller notes
-              </p>
-              <h2 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl md:text-5xl">
-                Sent by people who took the trip.
-              </h2>
-              <div className="mt-8 flex items-center gap-4">
-                <div className="text-4xl font-semibold text-ink sm:text-5xl">4.94</div>
-                <div>
-                  <div className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                    Trustpilot & Google
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    12,481 verified reviews
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                {
-                  q: "The first time I've booked a long haul flight without a second tab open. Everything was already right.",
-                  n: "Chisomo P.",
-                  r: "Lilongwe → Nairobi",
-                },
-                {
-                  q: "My concierge rebooked me during a strike before I'd even seen the news. That's the whole pitch.",
-                  n: "Jonas M.",
-                  r: "Blantyre → Johannesburg",
-                },
-                {
-                  q: "The dashboard is disarmingly calm. Everything I need, nothing I don't.",
-                  n: "Priya K.",
-                  r: "Mumbai → Lisbon",
-                },
-                {
-                  q: "I've stopped comparing prices. Biazo's number has always been the real one.",
-                  n: "Thandi N.",
-                  r: "Lilongwe → Dubai",
-                },
-              ].map((t) => (
-                <figure
-                  key={t.n}
-                  className="flex h-full flex-col justify-between rounded-2xl border border-hairline bg-background p-6"
-                >
-                  <blockquote className="text-base leading-relaxed text-ink">
-                    "{t.q}"
-                  </blockquote>
-                  <figcaption className="mt-6 flex flex-col gap-1 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-                    <span className="font-semibold text-ink">{t.n}</span>
-                    <span className="truncate uppercase tracking-[0.14em]">{t.r}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 md:py-32">
         <div className="relative overflow-hidden rounded-2xl bg-ink p-6 text-ivory sm:rounded-3xl sm:p-10 md:p-16">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-signal opacity-30 blur-3xl" />
-          <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-signal opacity-20 blur-3xl" />
           <div className="relative grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-end">
             <div>
               <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-signal">
@@ -395,7 +329,7 @@ function Landing() {
                 to="/book"
                 className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
               >
-                Search a flight <ArrowUpRight className="h-4 w-4" />
+                Apply for a flight <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

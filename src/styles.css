@@ -93,31 +93,33 @@
 }
 
 .dark {
-  --background: oklch(0.12 0.008 60);
-  --foreground: oklch(0.97 0.006 80);
-  --ink: oklch(0.97 0.006 80);
-  --ivory: oklch(0.14 0.008 60);
-  --surface: oklch(0.16 0.008 60);
-  --surface-elevated: oklch(0.19 0.008 60);
-  --hairline: oklch(0.28 0.008 60);
-  --signal: oklch(0.72 0.19 42);
-  --signal-foreground: oklch(0.12 0.008 60);
-  --signal-soft: oklch(0.28 0.06 45);
-  --card: oklch(0.16 0.008 60);
-  --card-foreground: oklch(0.97 0.006 80);
-  --popover: oklch(0.16 0.008 60);
-  --popover-foreground: oklch(0.97 0.006 80);
-  --primary: oklch(0.97 0.006 80);
-  --primary-foreground: oklch(0.14 0.008 60);
-  --secondary: oklch(0.2 0.008 60);
-  --secondary-foreground: oklch(0.97 0.006 80);
-  --muted: oklch(0.2 0.008 60);
-  --muted-foreground: oklch(0.68 0.012 60);
-  --accent: oklch(0.72 0.19 42);
-  --accent-foreground: oklch(0.12 0.008 60);
-  --border: oklch(0.28 0.008 60);
-  --input: oklch(0.28 0.008 60);
-  --ring: oklch(0.72 0.19 42);
+  --background: oklch(0.11 0.015 265);
+  --foreground: oklch(0.96 0.008 85);
+  --ink: oklch(0.97 0.006 85);
+  --ivory: oklch(0.13 0.012 265);
+  --surface: oklch(0.15 0.014 265);
+  --surface-elevated: oklch(0.19 0.016 265);
+  --hairline: oklch(0.28 0.018 265);
+  --signal: oklch(0.74 0.2 42);
+  --signal-foreground: oklch(0.12 0.012 265);
+  --signal-soft: oklch(0.24 0.055 45);
+  --card: oklch(0.16 0.014 265);
+  --card-foreground: oklch(0.96 0.008 85);
+  --popover: oklch(0.17 0.014 265);
+  --popover-foreground: oklch(0.96 0.008 85);
+  --primary: oklch(0.96 0.008 85);
+  --primary-foreground: oklch(0.13 0.012 265);
+  --secondary: oklch(0.22 0.016 265);
+  --secondary-foreground: oklch(0.94 0.008 85);
+  --muted: oklch(0.22 0.016 265);
+  --muted-foreground: oklch(0.72 0.012 265);
+  --accent: oklch(0.74 0.2 42);
+  --accent-foreground: oklch(0.12 0.012 265);
+  --destructive: oklch(0.62 0.22 27);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.28 0.018 265);
+  --input: oklch(0.24 0.016 265);
+  --ring: oklch(0.74 0.2 42);
 }
 
 @layer base {
@@ -194,25 +196,40 @@
   background: var(--signal);
   color: var(--signal-foreground);
   cursor: pointer;
-  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 200ms;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.2) inset, 0 8px 20px -8px color-mix(in oklab, var(--signal) 60%, transparent);
-  &:hover {
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1), background 150ms, opacity 150ms;
+  box-shadow: none;
+  &:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 12px 28px -8px color-mix(in oklab, var(--signal) 70%, transparent);
+    background: color-mix(in oklab, var(--signal) 92%, white);
   }
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(0);
   }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+@utility btn-inert {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 @utility btn-ink {
   background: var(--ink);
   color: var(--ivory);
   cursor: pointer;
-  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1), background 200ms;
-  &:hover {
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1), background 150ms, opacity 150ms;
+  box-shadow: none;
+  &:hover:not(:disabled) {
     transform: translateY(-1px);
     background: color-mix(in oklab, var(--ink) 92%, var(--signal));
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 }
 

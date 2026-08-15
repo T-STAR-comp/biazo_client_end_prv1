@@ -10,6 +10,8 @@ import { useEffect } from "react";
 
 import { CurrencyProvider } from "../context/currency-context";
 import { AuthProvider } from "../context/auth-context";
+import { ThemeProvider } from "../context/theme-context";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -114,11 +116,14 @@ function RootComponent() {
     <>
       <HeadContent />
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CurrencyProvider>
-            <Outlet />
-          </CurrencyProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <CurrencyProvider>
+              <Outlet />
+              <Toaster richColors closeButton position="top-center" />
+            </CurrencyProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </>
   );

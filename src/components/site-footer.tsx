@@ -5,7 +5,7 @@ const cols = [
   {
     title: "Travel",
     links: [
-      { to: "/book", label: "Search flights" },
+      { to: "/book", label: "Apply for a flight" },
       { to: "/", label: "Destinations" },
       { to: "/dashboard", label: "My trips" },
     ],
@@ -14,8 +14,8 @@ const cols = [
     title: "Company",
     links: [
       { to: "/about", label: "About Biazo" },
-      { to: "/about", label: "Careers" },
-      { to: "/about", label: "Press" },
+      { to: "/about", label: "Careers", disabled: true },
+      { to: "/about", label: "Press", disabled: true },
     ],
   },
   {
@@ -23,7 +23,7 @@ const cols = [
     links: [
       { to: "/terms", label: "Terms of service" },
       { to: "/legal", label: "Privacy & legal" },
-      { to: "/legal", label: "Cookies" },
+      { to: "/legal", label: "Cookies", disabled: true },
     ],
   },
 ];
@@ -36,11 +36,17 @@ export function SiteFooter() {
           <Logo />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:mt-6">
             Biazo is a modern traveling agency built for people who move with intention.
-            Explore beyond the boundaries.
+            Apply for flights to any country from Malawi and beyond.
           </p>
-          <p className="mt-4 text-xs uppercase tracking-[0.18em] text-muted-foreground sm:mt-6">
-            Lilongwe · Blantyre · Nairobi
-          </p>
+          <div className="mt-4 space-y-1 text-sm text-muted-foreground sm:mt-6">
+            <a href="mailto:hello@biazo.net" className="block transition-colors hover:text-ink">
+              hello@biazo.net
+            </a>
+            <a href="tel:+265995435470" className="block transition-colors hover:text-ink">
+              +265 995 43 54 70
+            </a>
+            <p className="text-xs uppercase tracking-[0.18em]">Lilongwe, Malawi</p>
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           {cols.map((col) => (
@@ -51,12 +57,18 @@ export function SiteFooter() {
               <ul className="mt-3 space-y-2 sm:mt-4 sm:space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <Link
-                      to={l.to}
-                      className="inline-flex min-h-[44px] items-center text-sm text-muted-foreground transition-colors hover:text-ink"
-                    >
-                      {l.label}
-                    </Link>
+                    {l.disabled ? (
+                      <span className="inline-flex min-h-[44px] items-center text-sm text-muted-foreground/50">
+                        {l.label}
+                      </span>
+                    ) : (
+                      <Link
+                        to={l.to}
+                        className="inline-flex min-h-[44px] items-center text-sm text-muted-foreground transition-colors hover:text-ink"
+                      >
+                        {l.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -67,7 +79,7 @@ export function SiteFooter() {
       <div className="border-t border-hairline">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 py-5 text-center text-xs text-muted-foreground sm:flex-row sm:items-center sm:px-6 sm:py-6 sm:text-left">
           <span>© 2026 Biazo Traveling Agency. Explore beyond the boundaries.</span>
-          <span>Built with intention.</span>
+          <span>Built with intention in Lilongwe.</span>
         </div>
       </div>
     </footer>

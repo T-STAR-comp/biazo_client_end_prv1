@@ -123,8 +123,8 @@ function Overview() {
         <div className="rounded-2xl border border-hairline bg-signal-soft p-6">
           <h2 className="text-lg font-semibold tracking-[-0.02em] text-ink">Book from Malawi</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Search flights from Lilongwe (LLW) or Chileka, Blantyre (BLZ) to destinations across
-            Africa and beyond.
+            Apply for flights from Lilongwe (LLW) or Chileka, Blantyre (BLZ) to any country
+            worldwide.
           </p>
           <Link
             to="/dashboard/book"
@@ -143,7 +143,7 @@ function UpcomingCard({ booking }: { booking: Booking }) {
   const arrive = new Date(booking.arriveAt);
 
   return (
-    <article className="relative overflow-hidden rounded-3xl bg-ink text-ivory shadow-[var(--shadow-lift)]">
+    <article className="relative overflow-hidden rounded-3xl bg-ink text-ivory">
       <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink/90 to-signal/30" />
       <div className="relative p-8 md:p-10">
         <div className="flex flex-wrap items-center justify-between gap-3">

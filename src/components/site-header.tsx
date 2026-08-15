@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { Logo } from "./logo";
 import { CurrencySelector } from "./currency-selector";
 import { useAuth } from "@/context/auth-context";
+import { useTheme } from "@/context/theme-context";
 
 const nav = [
   { to: "/", label: "Explore" },
@@ -15,12 +16,17 @@ const nav = [
 export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const linkClass = overlay
     ? "rounded-xl px-4 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10"
     : "rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink";
 
   const activeClass = overlay ? "bg-white/15 text-white" : "bg-secondary text-ink";
+
+  const themeButtonClass = overlay
+    ? "text-white/90 hover:bg-white/10"
+    : "text-ink hover:bg-secondary";
 
   return (
     <>
@@ -31,12 +37,12 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
             : "sticky top-0 z-40 border-b border-hairline glass-panel"
         }
       >
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
-          <Link to="/" className="shrink-0" onClick={() => setMenuOpen(false)}>
+        <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 pr-[max(1rem,env(safe-area-inset-right))] sm:h-16 sm:gap-3 sm:px-6">
+          <Link to="/" className="min-w-0 shrink-0" onClick={() => setMenuOpen(false)}>
             <Logo light={overlay} compact />
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
             {nav.map((item) => (
               <Link
                 key={item.to}
@@ -56,16 +62,26 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <CurrencySelector variant={overlay ? "overlay" : "default"} />
+          <div className="ml-auto flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={`touch-target hidden items-center justify-center rounded-xl sm:inline-flex ${themeButtonClass}`}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+
+            <CurrencySelector variant={overlay ? "overlay" : "default"} className="hidden sm:flex" />
+
             {isAuthenticated ? (
               <>
                 <Link
                   to="/dashboard"
                   className={
                     overlay
-                      ? "hidden min-h-[44px] items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/90 sm:inline-flex"
-                      : "btn-ink hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium sm:inline-flex"
+                      ? "hidden min-h-[44px] items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/90 md:inline-flex"
+                      : "btn-ink hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium md:inline-flex"
                   }
                 >
                   Dashboard
@@ -75,8 +91,8 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                   onClick={() => logout()}
                   className={
                     overlay
-                      ? "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 sm:inline-flex"
-                      : "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink sm:inline-flex"
+                      ? "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 md:inline-flex"
+                      : "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink md:inline-flex"
                   }
                 >
                   Sign out
@@ -88,8 +104,8 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                   to="/auth"
                   className={
                     overlay
-                      ? "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 sm:inline-flex"
-                      : "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-secondary sm:inline-flex"
+                      ? "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 md:inline-flex"
+                      : "hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-secondary md:inline-flex"
                   }
                 >
                   Sign in
@@ -99,8 +115,8 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                   search={{ mode: "signup" }}
                   className={
                     overlay
-                      ? "hidden min-h-[44px] items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/90 sm:inline-flex"
-                      : "btn-ink hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium sm:inline-flex"
+                      ? "hidden min-h-[44px] items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-white/90 md:inline-flex"
+                      : "btn-ink hidden min-h-[44px] items-center rounded-full px-4 py-2 text-sm font-medium md:inline-flex"
                   }
                 >
                   Get started
@@ -111,11 +127,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className={`touch-target inline-flex items-center justify-center rounded-xl md:hidden ${
-                overlay
-                  ? "text-white hover:bg-white/10"
-                  : "text-ink hover:bg-secondary"
-              }`}
+              className={`touch-target inline-flex shrink-0 items-center justify-center rounded-xl md:hidden ${themeButtonClass}`}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -145,16 +157,26 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
               overlay ? "bg-ink/95 text-white" : "bg-background"
             }`}
           >
-            <div className="flex h-14 items-center justify-between border-b border-hairline px-4 sm:h-16">
+            <div className="flex h-14 items-center justify-between border-b border-hairline px-4 pr-[max(1rem,env(safe-area-inset-right))] sm:h-16">
               <Logo light={overlay} />
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                className="touch-target inline-flex items-center justify-center rounded-xl"
-                aria-label="Close menu"
-              >
-                <X className="h-6 w-6" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="touch-target inline-flex items-center justify-center rounded-xl"
+                  aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(false)}
+                  className="touch-target inline-flex items-center justify-center rounded-xl"
+                  aria-label="Close menu"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
             </div>
             <nav className="flex flex-col gap-1 overflow-y-auto p-4">
               {nav.map((item) => (

@@ -10,13 +10,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Filter, Search, SortAsc } from "lucide-react";
+import { Filter, Plane, SortAsc } from "lucide-react";
 
 export const Route = createFileRoute("/book")({
   head: () => ({
     meta: [
-      { title: "Book a flight — Biazo" },
-      { name: "description", content: "Search and book flights with Biazo Traveling Agency." },
+      { title: "Apply for a flight — Biazo" },
+      { name: "description", content: "Apply for flights to any country with Biazo Traveling Agency." },
     ],
   }),
   component: Book,
@@ -35,10 +35,10 @@ function Book() {
             Home
           </Link>
           <span>/</span>
-          <span>Search flights</span>
+          <span>Apply for a flight</span>
         </div>
 
-        <FlightSearch onSearch={() => setSearched(true)} />
+        <FlightSearch onSearch={() => setSearched(true)} stayOnPage />
 
         <div className="mt-8 grid gap-6 lg:mt-10 lg:grid-cols-[280px_1fr] lg:gap-8">
           <aside className="hidden space-y-6 lg:block">
@@ -49,12 +49,12 @@ function Book() {
             <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-xl font-semibold tracking-[-0.02em] sm:text-2xl">
-                  {searched ? "Flight results" : "Search flights from Malawi"}
+                  {searched ? "Application preview" : "Apply for a flight from Malawi"}
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {searched
-                    ? "Live inventory connects when you sign in and book through Biazo."
-                    : "Enter your route above — Lilongwe, Blantyre, and regional hubs."}
+                    ? "Sign in to submit your application — we quote routes to any country."
+                    : "Enter your route above. Lilongwe, Blantyre, and destinations worldwide."}
                 </p>
               </div>
               {searched && (
@@ -63,7 +63,7 @@ function Book() {
                     <SheetTrigger asChild>
                       <button
                         type="button"
-                        className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-hairline bg-surface-elevated px-4 py-2 text-sm font-medium text-ink lg:hidden"
+                        className="btn-inert inline-flex min-h-[44px] items-center gap-2 rounded-full border border-hairline bg-surface-elevated px-4 py-2 text-sm font-medium lg:hidden"
                       >
                         <Filter className="h-4 w-4" />
                         Filters
@@ -79,18 +79,15 @@ function Book() {
                     </SheetContent>
                   </Sheet>
 
-                  <div className="flex flex-wrap items-center gap-1 rounded-full border border-hairline bg-surface-elevated p-1 text-xs font-medium">
-                    {["Best", "Cheapest", "Fastest"].map((s, i) => (
-                      <button
+                  <div className="btn-inert flex flex-wrap items-center gap-1 rounded-full border border-hairline bg-surface-elevated p-1 text-xs font-medium">
+                    {["Best", "Cheapest", "Fastest"].map((s) => (
+                      <span
                         key={s}
-                        type="button"
-                        className={`inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 py-2 ${
-                          i === 0 ? "bg-ink text-ivory" : "text-muted-foreground hover:text-ink"
-                        }`}
+                        className="inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 py-2 text-muted-foreground"
                       >
                         <SortAsc className="h-3 w-3 shrink-0" />
                         {s}
-                      </button>
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -100,11 +97,11 @@ function Book() {
             {!searched ? (
               <div className="rounded-2xl border border-dashed border-hairline bg-surface p-10 text-center sm:p-14">
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-signal-soft text-signal">
-                  <Search className="h-5 w-5" />
+                  <Plane className="h-5 w-5" />
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
-                  Run a search to see available fares. Sign in to book with your saved preferences
-                  and payment methods.
+                  Complete the form above to start your application. Sign in to submit with your
+                  saved preferences and payment methods.
                 </p>
                 <Link
                   to="/auth"
@@ -117,8 +114,8 @@ function Book() {
             ) : (
               <div className="rounded-2xl border border-hairline bg-surface-elevated p-8 text-center sm:p-12">
                 <p className="text-sm text-muted-foreground">
-                  No live flight inventory in this preview. Create a Biazo account and our concierge
-                  will quote and ticket your route within minutes.
+                  Live inventory connects when you sign in. Our concierge will quote and ticket your
+                  route to any country within minutes.
                 </p>
                 <Link
                   to="/auth"

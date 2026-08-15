@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   accountApi,
   authApi,
@@ -42,6 +43,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const ACCOUNT_QUERY_KEY = ["account", "me"] as const;
 
 function hasStoredSession() {
   if (typeof window === "undefined") return false;
@@ -49,44 +51,67 @@ function hasStoredSession() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(() => readCachedUser());
-  const [account, setAccount] = useState<AccountPayload | null>(null);
-  const [loading, setLoading] = useState(() => hasStoredSession());
+  const sessionActive = hasStoredSession();
+
+  const accountQuery = useQuery({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: accountApi.me,
+    enabled: sessionActive,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const account = accountQuery.data ?? null;
+  const loading = sessionActive && accountQuery.isLoading && !account;
+
+  useEffect(() => {
+    if (account?.user) {
+      setUser(account.user);
+      cacheUser(account.user);
+    }
+  }, [account]);
 
   const refreshAccount = useCallback(async () => {
     if (!hasStoredSession()) {
       setUser(null);
-      setAccount(null);
       clearUserCache();
+      queryClient.removeQueries({ queryKey: ACCOUNT_QUERY_KEY });
       return;
     }
 
     try {
-      const data = await accountApi.me();
+      const data = await queryClient.fetchQuery({
+        queryKey: ACCOUNT_QUERY_KEY,
+        queryFn: accountApi.me,
+        staleTime: 5 * 60 * 1000,
+      });
       setUser(data.user);
-      setAccount(data);
       cacheUser(data.user);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setUser(null);
-        setAccount(null);
         clearTokens();
         clearUserCache();
+        queryClient.removeQueries({ queryKey: ACCOUNT_QUERY_KEY });
         return;
       }
-      // Keep the existing session on network/server errors — do not log the user out.
       const cached = readCachedUser();
       if (cached) setUser(cached);
     }
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
-    if (!hasStoredSession()) {
-      setLoading(false);
-      return;
+    if (!sessionActive) return;
+    if (accountQuery.isError) {
+      const err = accountQuery.error;
+      if (err instanceof ApiError && err.status === 401) {
+        setUser(null);
+        clearTokens();
+        clearUserCache();
+      }
     }
-    refreshAccount().finally(() => setLoading(false));
-  }, [refreshAccount]);
+  }, [sessionActive, accountQuery.isError, accountQuery.error]);
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await authApi.login({ email, password });
@@ -101,8 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokens(res.accessToken, res.refreshToken);
     setUser(res.user);
     cacheUser(res.user);
-    await refreshAccount();
-  }, [refreshAccount]);
+    await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+  }, [queryClient]);
 
   const signup = useCallback(
     async (input: {
@@ -123,8 +148,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokens(res.accessToken, res.refreshToken);
     setUser(res.user);
     cacheUser(res.user);
-    await refreshAccount();
-  }, [refreshAccount]);
+    await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+  }, [queryClient]);
 
   const forgotPassword = useCallback(async (email: string) => {
     const res = await authApi.forgotPassword({ email });
@@ -145,9 +170,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearTokens();
       clearUserCache();
       setUser(null);
-      setAccount(null);
+      queryClient.removeQueries({ queryKey: ACCOUNT_QUERY_KEY });
     }
-  }, []);
+  }, [queryClient]);
 
   const value = useMemo(
     () => ({

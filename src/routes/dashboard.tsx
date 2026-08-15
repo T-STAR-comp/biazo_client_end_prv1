@@ -143,31 +143,20 @@ function DashboardLayoutInner() {
               </Link>
             </div>
 
-            <div className="hidden flex-1 items-center gap-2 lg:flex">
-              <div className="flex w-full max-w-md items-center gap-2 rounded-full border border-hairline bg-surface px-4 py-2 text-sm text-muted-foreground">
+              <div className="hidden flex-1 items-center gap-2 lg:flex">
+              <div className="btn-inert flex w-full max-w-md items-center gap-2 rounded-full border border-hairline bg-surface px-4 py-2 text-sm text-muted-foreground">
                 <Search className="h-4 w-4 shrink-0" />
-                <input
-                  placeholder="Search bookings, cities, PNRs…"
-                  className="w-full bg-transparent outline-none"
-                />
-                <span className="hidden rounded-md border border-hairline px-1.5 py-0.5 text-[10px] uppercase text-muted-foreground md:inline">
-                  ⌘K
-                </span>
+                <span>Search coming soon</span>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5 sm:gap-2">
               <CurrencySelector className="hidden sm:flex" />
-              <Link
-                to="/dashboard"
-                className="touch-target inline-flex items-center justify-center rounded-full border border-hairline text-muted-foreground hover:text-ink lg:hidden"
-                aria-label="Search"
-              >
-                <Search className="h-4 w-4" />
-              </Link>
               <button
                 type="button"
-                className="touch-target inline-flex items-center justify-center rounded-full border border-hairline text-muted-foreground hover:text-ink"
+                disabled
+                title="Notifications coming soon"
+                className="btn-inert touch-target hidden items-center justify-center rounded-full border border-hairline sm:inline-flex"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
