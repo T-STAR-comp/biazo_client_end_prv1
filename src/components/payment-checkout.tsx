@@ -92,7 +92,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
           type="button"
           onClick={() => setPayMode("paychangu")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
-            payMode === "paychangu" ? "bg-ink text-ivory" : "text-muted-foreground"
+            payMode === "paychangu" ? "nav-active font-semibold text-foreground" : "text-muted-foreground"
           }`}
         >
           <CreditCard className="h-4 w-4" />

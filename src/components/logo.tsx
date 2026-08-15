@@ -32,7 +32,7 @@ export function Logo({
       />
       <div className="flex flex-col leading-none">
         <span
-          className={`text-xl font-bold tracking-tight sm:text-2xl md:text-3xl ${light ? "text-white" : "text-ink"}`}
+          className={`text-xl font-bold tracking-tight sm:text-2xl md:text-3xl ${light ? "text-white" : "text-foreground"}`}
         >
           BIAZO
         </span>

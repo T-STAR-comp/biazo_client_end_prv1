@@ -153,7 +153,7 @@ function SettingsPage() {
                 }}
                 className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
                   i === 0
-                    ? "bg-ink text-ivory"
+                    ? "nav-active font-semibold text-foreground"
                     : "text-muted-foreground hover:bg-secondary hover:text-ink"
                 }`}
               >

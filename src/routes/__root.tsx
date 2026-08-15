@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 import { CurrencyProvider } from "../context/currency-context";
 import { AuthProvider } from "../context/auth-context";
-import { ThemeProvider } from "../context/theme-context";
+import { ThemeProvider, useTheme } from "../context/theme-context";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -109,6 +109,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+function AppToaster() {
+  const { theme } = useTheme();
+  return <Toaster theme={theme} richColors closeButton position="top-center" />;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -120,7 +125,7 @@ function RootComponent() {
           <AuthProvider>
             <CurrencyProvider>
               <Outlet />
-              <Toaster richColors closeButton position="top-center" />
+              <AppToaster />
             </CurrencyProvider>
           </AuthProvider>
         </ThemeProvider>

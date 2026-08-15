@@ -115,7 +115,7 @@ export function FlightApplicationForm({ onSubmitted }: { onSubmitted: (ref: stri
                   key={t}
                   type="button"
                   onClick={() => setTripType(t)}
-                  className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-medium ${tripType === t ? "bg-ink text-ivory" : "bg-surface text-muted-foreground"}`}
+                  className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-medium ${tripType === t ? "nav-active font-semibold text-foreground" : "bg-surface text-muted-foreground"}`}
                 >
                   {t === "oneway" ? "One way" : "Return"}
                 </button>

@@ -20,13 +20,13 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
 
   const linkClass = overlay
     ? "rounded-xl px-4 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10"
-    : "rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink";
+    : "rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground";
 
-  const activeClass = overlay ? "bg-white/15 text-white" : "bg-secondary text-ink";
+  const activeClass = overlay ? "bg-white/15 text-white" : "nav-active font-semibold text-foreground";
 
   const themeButtonClass = overlay
     ? "text-white/90 hover:bg-white/10"
-    : "text-ink hover:bg-secondary";
+    : "text-foreground hover:bg-secondary";
 
   return (
     <>
@@ -50,10 +50,10 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                 className={
                   overlay
                     ? "rounded-full px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-                    : "rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink"
+                    : "rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                 }
                 activeProps={{
-                  className: overlay ? "bg-white/15 text-white" : "bg-secondary text-ink",
+                  className: overlay ? "bg-white/15 text-white" : "bg-secondary text-foreground",
                 }}
                 activeOptions={{ exact: item.to === "/" }}
               >

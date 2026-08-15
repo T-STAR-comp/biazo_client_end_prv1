@@ -44,11 +44,11 @@ export function HeroFlightPanel({
         ) : (
           <div className="max-h-[min(85dvh,720px)] overflow-y-auto rounded-t-3xl border-t border-hairline bg-background/95 shadow-none backdrop-blur-xl">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-hairline bg-background/95 px-4 py-3">
-              <p className="text-sm font-semibold text-ink">Apply for a flight</p>
+              <p className="text-sm font-semibold text-foreground">Apply for a flight</p>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="touch-target inline-flex items-center justify-center rounded-xl text-muted-foreground hover:text-ink"
+                className="touch-target inline-flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground"
                 aria-label="Collapse flight form"
               >
                 <ChevronDown className="h-5 w-5" />

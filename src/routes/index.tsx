@@ -126,19 +126,31 @@ function Landing() {
             <SiteHeader overlay />
 
             <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-6xl flex-col px-4 pt-20 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:min-h-[85vh] sm:px-6 sm:pt-24 sm:pb-8 lg:min-h-[92vh] lg:px-8">
-              <div className="max-w-2xl pt-1 sm:pt-4">
-                <h1 className="text-[1.75rem] leading-tight font-semibold tracking-[-0.04em] text-white sm:text-4xl sm:leading-[0.95] md:text-5xl lg:text-6xl">
+              <div className="flex flex-1 flex-col justify-center sm:block sm:flex-none sm:max-w-2xl sm:pt-4">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-signal sm:hidden">
+                  Biazo Traveling Agency
+                </p>
+                <h1 className="text-[2.85rem] leading-[1.02] font-semibold tracking-[-0.045em] text-white sm:text-4xl sm:leading-[0.95] md:text-5xl lg:text-6xl">
                   Explore beyond
                   <br />
                   the <span className="text-display text-signal">boundaries.</span>
                 </h1>
-                <p className="mt-3 max-w-lg text-sm text-white/85 sm:mt-4 sm:text-base">
+                <p className="mt-4 max-w-lg text-base leading-relaxed text-white/90 sm:mt-4 sm:text-base">
                   A traveling agency for people who fly with intention. Apply for flights to
                   any country — our team handles the rest from Lilongwe.
                 </p>
+                <div className="mt-6 flex flex-wrap gap-2 sm:hidden">
+                  <span className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-white/95 backdrop-blur-sm">
+                    Any country worldwide
+                  </span>
+                  <span className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-white/95 backdrop-blur-sm">
+                    From Lilongwe, Malawi
+                  </span>
+                </div>
+                <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.2em] text-white/55 sm:hidden">
+                  Tap below to apply
+                </p>
               </div>
-
-              <div className="flex-1 sm:hidden" aria-hidden />
 
               <HeroFlightPanel
                 countryOptions={countryOptions}
@@ -150,7 +162,7 @@ function Landing() {
 
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
             <div className="flex snap-x snap-mandatory items-center gap-4 overflow-x-auto border-y border-hairline py-5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2 sm:overflow-visible sm:text-xs">
-              <span className="shrink-0 snap-start font-semibold text-ink sm:text-muted-foreground">Trusted partners</span>
+              <span className="shrink-0 snap-start font-semibold text-foreground sm:text-muted-foreground">Trusted partners</span>
               <span className="shrink-0 snap-start whitespace-nowrap">South African Airways</span>
               <span className="shrink-0 snap-start whitespace-nowrap">TAP Air Portugal</span>
               <span className="shrink-0 snap-start whitespace-nowrap">Qatar Airways</span>

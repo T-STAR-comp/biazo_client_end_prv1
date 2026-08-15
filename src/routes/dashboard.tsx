@@ -96,7 +96,7 @@ function DashboardLayoutInner() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] flex-col border-r border-hairline bg-background lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] flex-col border-r border-hairline bg-surface lg:flex">
         <div className="flex h-16 shrink-0 items-center border-b border-hairline px-6">
           <Link to="/">
             <Logo />
@@ -112,9 +112,9 @@ function DashboardLayoutInner() {
               key={to}
               to={to}
               activeOptions={{ exact }}
-              className="flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-ink"
+              className="flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               activeProps={{
-                className: "bg-ink text-ivory hover:bg-ink hover:text-ivory",
+                className: "nav-active font-semibold text-foreground hover:text-foreground",
               }}
             >
               <Icon className="h-4 w-4" />
@@ -127,7 +127,7 @@ function DashboardLayoutInner() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:text-ink"
+            className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
@@ -135,7 +135,7 @@ function DashboardLayoutInner() {
       </aside>
 
       <div className="flex min-h-screen flex-col lg:pl-[264px]">
-        <header className="sticky top-0 z-30 border-b border-hairline bg-background/80 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-hairline bg-surface/90 backdrop-blur">
           <div className="flex h-14 items-center justify-between gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-10">
             <div className="flex min-w-0 flex-1 items-center gap-3 lg:hidden">
               <Link to="/" className="shrink-0">
@@ -177,7 +177,7 @@ function DashboardLayoutInner() {
                   {initials}
                 </div>
                 <div className="hidden text-xs leading-tight md:block">
-                  <div className="font-semibold text-ink">{displayName}</div>
+                  <div className="font-semibold text-foreground">{displayName}</div>
                   <div className="text-muted-foreground">Biazo member</div>
                 </div>
               </div>
@@ -190,7 +190,7 @@ function DashboardLayoutInner() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-hairline bg-background/95 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-hairline bg-surface/95 backdrop-blur lg:hidden">
         {nav.map(({ to, label, shortLabel, icon: Icon, exact }) => (
           <Link
             key={to}

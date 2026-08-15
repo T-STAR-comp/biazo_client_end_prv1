@@ -46,13 +46,13 @@ function Tickets() {
             Boarding passes & itineraries.
           </h1>
         </div>
-        <div className="flex items-center gap-1 rounded-full border border-hairline bg-background p-1 text-sm font-medium">
+        <div className="flex items-center gap-1 rounded-full border border-hairline bg-surface p-1 text-sm font-medium">
           {(["upcoming", "past"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`rounded-full px-4 py-1.5 capitalize transition-colors ${
-                tab === t ? "bg-ink text-ivory" : "text-muted-foreground hover:text-ink"
+                tab === t ? "nav-active font-semibold text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {t}

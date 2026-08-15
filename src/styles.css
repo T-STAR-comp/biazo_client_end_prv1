@@ -95,31 +95,37 @@
 .dark {
   --background: oklch(0.11 0.015 265);
   --foreground: oklch(0.96 0.008 85);
-  --ink: oklch(0.97 0.006 85);
-  --ivory: oklch(0.13 0.012 265);
-  --surface: oklch(0.15 0.014 265);
-  --surface-elevated: oklch(0.19 0.016 265);
-  --hairline: oklch(0.28 0.018 265);
+
+  /* Brand ink/ivory stay constant — dark surfaces & light-on-dark text */
+  --ink: oklch(0.12 0.012 265);
+  --ivory: oklch(0.97 0.006 85);
+
+  --surface: oklch(0.14 0.014 265);
+  --surface-elevated: oklch(0.17 0.016 265);
+  --hairline: oklch(0.26 0.018 265);
   --signal: oklch(0.74 0.2 42);
   --signal-foreground: oklch(0.12 0.012 265);
-  --signal-soft: oklch(0.24 0.055 45);
-  --card: oklch(0.16 0.014 265);
+  --signal-soft: oklch(0.22 0.06 45);
+  --card: oklch(0.15 0.014 265);
   --card-foreground: oklch(0.96 0.008 85);
-  --popover: oklch(0.17 0.014 265);
+  --popover: oklch(0.16 0.014 265);
   --popover-foreground: oklch(0.96 0.008 85);
   --primary: oklch(0.96 0.008 85);
-  --primary-foreground: oklch(0.13 0.012 265);
-  --secondary: oklch(0.22 0.016 265);
+  --primary-foreground: oklch(0.12 0.012 265);
+  --secondary: oklch(0.2 0.016 265);
   --secondary-foreground: oklch(0.94 0.008 85);
-  --muted: oklch(0.22 0.016 265);
-  --muted-foreground: oklch(0.72 0.012 265);
+  --muted: oklch(0.2 0.016 265);
+  --muted-foreground: oklch(0.7 0.014 265);
   --accent: oklch(0.74 0.2 42);
   --accent-foreground: oklch(0.12 0.012 265);
   --destructive: oklch(0.62 0.22 27);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.28 0.018 265);
-  --input: oklch(0.24 0.016 265);
+  --border: oklch(0.26 0.018 265);
+  --input: oklch(0.22 0.016 265);
   --ring: oklch(0.74 0.2 42);
+
+  --shadow-glass: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 20px 40px -20px rgb(0 0 0 / 0.45);
+  --shadow-lift: 0 30px 60px -30px rgb(0 0 0 / 0.5), 0 8px 20px -12px rgb(0 0 0 / 0.35);
 }
 
 @layer base {
@@ -187,9 +193,21 @@
 }
 
 @utility glass-panel {
-  background: color-mix(in oklab, var(--surface-elevated) 70%, transparent);
-  backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid color-mix(in oklab, var(--hairline) 60%, transparent);
+  background: color-mix(in oklab, var(--surface-elevated) 78%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--hairline) 70%, transparent);
+}
+
+.dark .glass-panel,
+.dark.glass-panel {
+  background: color-mix(in oklab, var(--surface-elevated) 92%, transparent);
+  border-color: color-mix(in oklab, var(--hairline) 85%, transparent);
+}
+
+@utility nav-active {
+  background: color-mix(in oklab, var(--signal) 18%, var(--surface));
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklab, var(--signal) 35%, transparent);
 }
 
 @utility btn-signal {
