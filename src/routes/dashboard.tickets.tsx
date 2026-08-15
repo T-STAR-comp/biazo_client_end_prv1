@@ -15,8 +15,6 @@ import { useAuth } from "@/context/auth-context";
 import type { Ticket as TicketType } from "@/lib/api";
 import { getApiBase } from "@/lib/runtime-config";
 
-const API_BASE = getApiBase();
-
 function isTicketInactive(t: TicketType): boolean {
   if (t.isInactive || t.displayStatus === "inactive") return true;
   return isPast(addMinutes(new Date(t.departAt), 10));
@@ -226,7 +224,7 @@ function Cell({ k, v }: { k: string; v: string }) {
 
 async function downloadTicketDoc(path: string) {
   const token = localStorage.getItem("biazo-access-token");
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${getApiBase()}${path}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!res.ok) return;

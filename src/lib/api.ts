@@ -1,7 +1,5 @@
 import { getApiBase } from "./runtime-config";
 
-const API_BASE = getApiBase();
-
 export class ApiError extends Error {
   status: number;
   details?: unknown;
@@ -90,7 +88,7 @@ async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
 
-  const res = await fetch(`${API_BASE}/auth/refresh`, {
+  const res = await fetch(`${getApiBase()}/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),
@@ -115,10 +113,11 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}, retry = 
   const token = getAccessToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(`${API_BASE}${path}`, { ...init, headers }).catch(() => {
+  const apiBase = getApiBase();
+  const res = await fetch(`${apiBase}${path}`, { ...init, headers }).catch(() => {
     throw new ApiError(
       0,
-      `Cannot reach Biazo API at ${API_BASE}. Check that the cloud server is running and CORS allows ${typeof window !== "undefined" ? window.location.origin : "this site"}.`,
+      `Cannot reach Biazo API at ${apiBase}. Check that the cloud server is running and CORS allows ${typeof window !== "undefined" ? window.location.origin : "this site"}.`,
     );
   });
 
@@ -505,5 +504,5 @@ export const applicationsApi = {
   cancel: (id: string) =>
     apiFetch<{ message: string }>(`/applications/${id}/cancel`, { method: "POST" }),
   ticketUrl: (applicationId: string, ticketId: string) =>
-    `${API_BASE}/applications/${applicationId}/tickets/${ticketId}`,
+    `${getApiBase()}/applications/${applicationId}/tickets/${ticketId}`,
 };

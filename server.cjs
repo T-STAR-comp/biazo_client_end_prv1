@@ -24,13 +24,7 @@ if (indexTemplate.includes("/src/main.tsx")) {
   process.exit(1);
 }
 
-const runtimeApiUrl = process.env.API_URL || process.env.VITE_API_URL || "";
-const indexHtml = runtimeApiUrl
-  ? indexTemplate.replace(
-      "</head>",
-      `<script>window.__BIAZO_API_URL=${JSON.stringify(runtimeApiUrl)}</script></head>`,
-    )
-  : indexTemplate;
+const indexHtml = indexTemplate;
 
 function sendIndex(_req, res) {
   res.type("html").send(indexHtml);
@@ -52,8 +46,13 @@ app.use(
 );
 
 app.get("/", sendIndex);
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/assets/") || req.path.includes(".")) {
+
+// Express 5: bare "*" is invalid in path-to-regexp; use final middleware for SPA routes.
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return next();
+  }
+  if (req.path.startsWith("/assets/") || /\.[^/]+$/.test(req.path)) {
     return next();
   }
   sendIndex(req, res);
@@ -62,7 +61,4 @@ app.get("*", (req, res, next) => {
 app.listen(port, () => {
   console.log(`Biazo client app listening on port ${port}`);
   console.log(`Serving static files from ${distDir}`);
-  if (runtimeApiUrl) {
-    console.log(`Runtime API URL: ${runtimeApiUrl}`);
-  }
 });
