@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { Building2, CreditCard, ExternalLink, Loader2, Smartphone, Wallet } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Building2, CheckCircle2, CreditCard, ExternalLink, Loader2, Smartphone, Wallet } from "lucide-react";
 import { LoadingOverlay } from "@/components/loading-screen";
 import { useAuth } from "@/context/auth-context";
 import { useTravelCreditUi } from "@/context/travel-credit-ui-context";
 import { useCurrency } from "@/context/currency-context";
 import { formatPriceFromMwk, resolvePaymentCurrency } from "@/lib/currencies";
-import { paymentsApi, type PaymentConfig, type PaymentLedger, type MomoOperator } from "@/lib/api";
+import { paymentsApi, type PaymentConfig, type PaymentLedger, type MomoOperator, type ManualPaymentSource } from "@/lib/api";
 
 type Props = {
   applicationId: string;
@@ -28,7 +28,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
-  const [payMode, setPayMode] = useState<"paychangu" | "travel_credit">("paychangu");
+  const [payMode, setPayMode] = useState<"paychangu" | "travel_credit" | "bank_transfer">("paychangu");
 
   const [mobile, setMobile] = useState("");
   const [operatorRefId, setOperatorRefId] = useState("");
@@ -44,9 +44,15 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
   const canPayWithCredit = travelCreditMwk >= amountMwk;
 
   const isHosted = config?.checkoutMode === "hosted";
+  const useGateway = config?.usePaymentGateway !== false;
 
   useEffect(() => {
-    paymentsApi.getConfig().then(setConfig).catch(() => setConfig({ checkoutMode: "direct", mockMode: true }));
+    paymentsApi
+      .getConfig()
+      .then(setConfig)
+      .catch(() =>
+        setConfig({ checkoutMode: "direct", mockMode: true, usePaymentGateway: true, manualSources: [] }),
+      );
     paymentsApi.getActiveForApplication(applicationId).then((d) => {
       if (d.payment) {
         setPayment(d.payment);
@@ -72,32 +78,51 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
   }, [account]);
 
   useEffect(() => {
-    if (canPayWithCredit) setPayMode("travel_credit");
-  }, [canPayWithCredit]);
+    if (!useGateway && !canPayWithCredit) {
+      setPayMode("bank_transfer");
+    } else if (canPayWithCredit) {
+      setPayMode("travel_credit");
+    }
+  }, [canPayWithCredit, useGateway]);
 
   const payModeToggle =
-    travelCreditMwk > 0 ? (
+    travelCreditMwk > 0 || !useGateway ? (
       <div className="flex gap-2 rounded-xl border border-hairline bg-surface p-1">
-        <button
-          type="button"
-          onClick={() => setPayMode("travel_credit")}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
-            payMode === "travel_credit" ? "bg-signal text-signal-foreground" : "text-muted-foreground"
-          }`}
-        >
-          <Wallet className="h-4 w-4" />
-          Travel credit
-        </button>
-        <button
-          type="button"
-          onClick={() => setPayMode("paychangu")}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
-            payMode === "paychangu" ? "nav-active font-semibold text-foreground" : "text-muted-foreground"
-          }`}
-        >
-          <CreditCard className="h-4 w-4" />
-          PayChangu
-        </button>
+        {travelCreditMwk > 0 && (
+          <button
+            type="button"
+            onClick={() => setPayMode("travel_credit")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
+              payMode === "travel_credit" ? "bg-signal text-signal-foreground" : "text-muted-foreground"
+            }`}
+          >
+            <Wallet className="h-4 w-4" />
+            Travel credit
+          </button>
+        )}
+        {useGateway ? (
+          <button
+            type="button"
+            onClick={() => setPayMode("paychangu")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
+              payMode === "paychangu" ? "nav-active font-semibold text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            <CreditCard className="h-4 w-4" />
+            PayChangu
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPayMode("bank_transfer")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium ${
+              payMode === "bank_transfer" ? "nav-active font-semibold text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            <Building2 className="h-4 w-4" />
+            Bank transfer
+          </button>
+        )}
       </div>
     ) : null;
 
@@ -264,6 +289,41 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
     );
   }
 
+  if (payment?.status === "pending" && payment.paymentMethod === "manual_transfer") {
+    return (
+      <ManualBankTransferView
+        payment={payment}
+        amountMwk={amountMwk}
+        formatDisplay={formatDisplay}
+        loading={loading}
+        error={error}
+        onRefresh={async () => {
+          const { payment: p } = await paymentsApi.get(payment.id);
+          setPayment(p);
+          if (p.status === "completed") onPaid();
+        }}
+        onSubmitProof={async (file) => {
+          setLoading(true);
+          setError(null);
+          try {
+            const base64 = await fileToBase64(file);
+            const result = await paymentsApi.submitManualProof(payment.id, {
+              fileName: file.name,
+              mimeType: file.type || "application/octet-stream",
+              fileBase64: base64,
+            });
+            setPayment(result.payment);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "Could not upload proof");
+          } finally {
+            setLoading(false);
+          }
+        }}
+        onCancel={onCancel}
+      />
+    );
+  }
+
   if (payment?.status === "pending") {
     return (
       <div className="relative space-y-4">
@@ -280,7 +340,37 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
     );
   }
 
-  if (isHosted) {
+  if (!useGateway && payMode === "bank_transfer" && !payment) {
+    return (
+      <ManualBankTransferStart
+        applicationId={applicationId}
+        amountMwk={amountMwk}
+        formatDisplay={formatDisplay}
+        manualSources={config?.manualSources ?? []}
+        payModeToggle={payModeToggle}
+        loading={loading}
+        error={error}
+        onStart={async () => {
+          setLoading(true);
+          setError(null);
+          try {
+            const result = await paymentsApi.initiateManual({
+              applicationId,
+              displayCurrency: effectiveCurrency,
+            });
+            setPayment(result.payment);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "Could not start bank transfer");
+          } finally {
+            setLoading(false);
+          }
+        }}
+        onCancel={onCancel}
+      />
+    );
+  }
+
+  if (isHosted && useGateway) {
     return (
       <div className="relative space-y-5">
         {loading && <LoadingOverlay label="Starting payment" />}
@@ -347,7 +437,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
 
       {payModeToggle}
 
-      {payMode === "paychangu" && (
+      {payMode === "paychangu" && useGateway && (
       <>
       <div className="flex gap-2">
         {(
@@ -547,7 +637,9 @@ function PendingPaymentView({
           ? "PayChangu checkout"
           : payment.paymentMethod === "travel_credit"
             ? "Travel credit"
-            : "Card";
+            : payment.paymentMethod === "manual_transfer"
+              ? "Bank transfer"
+              : "Card";
 
   const displayAmount = formatPriceFromMwk(amountMwk, displayCurrency, exchangeRates);
 
@@ -601,6 +693,195 @@ function PendingPaymentView({
       </div>
     </div>
   );
+}
+
+function ManualBankTransferStart({
+  applicationId: _applicationId,
+  amountMwk,
+  formatDisplay,
+  manualSources,
+  payModeToggle,
+  loading,
+  error,
+  onStart,
+  onCancel,
+}: {
+  applicationId: string;
+  amountMwk: number;
+  formatDisplay: (mwk: number) => string;
+  manualSources: ManualPaymentSource[];
+  payModeToggle: React.ReactNode;
+  loading: boolean;
+  error: string | null;
+  onStart: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="relative space-y-5">
+      {loading && <LoadingOverlay label="Preparing payment" />}
+      <AmountDue amountMwk={amountMwk} formatDisplay={formatDisplay} showPaymentNote={false} paymentCurrency="MWK" displayCurrency="MWK" />
+      {payModeToggle}
+      <p className="text-sm text-muted-foreground">
+        Pay the exact quote amount by bank transfer to one of our accounts. You will receive a short reference to use in your transfer description.
+      </p>
+      {!manualSources.length && (
+        <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Bank account details are not available yet. Please contact support.
+        </p>
+      )}
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={onStart}
+          disabled={loading || !manualSources.length}
+          className="btn-signal flex-1 rounded-xl py-3 text-sm font-semibold disabled:opacity-60"
+        >
+          {loading ? "Preparing…" : "Show bank details"}
+        </button>
+        <button type="button" onClick={onCancel} className="rounded-xl border border-hairline px-4 py-3 text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ManualBankTransferView({
+  payment,
+  amountMwk,
+  formatDisplay,
+  loading,
+  error,
+  onRefresh,
+  onSubmitProof,
+  onCancel,
+}: {
+  payment: PaymentLedger;
+  amountMwk: number;
+  formatDisplay: (mwk: number) => string;
+  loading: boolean;
+  error: string | null;
+  onRefresh: () => Promise<void>;
+  onSubmitProof: (file: File) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [showUpload, setShowUpload] = useState(false);
+  const sources = (payment.manualPaymentSources ?? []) as ManualPaymentSource[];
+  const reviewStatus = payment.proofReviewStatus ?? "none";
+
+  useEffect(() => {
+    if (reviewStatus === "submitted") {
+      const timer = setInterval(() => {
+        void onRefresh();
+      }, 8000);
+      return () => clearInterval(timer);
+    }
+    return undefined;
+  }, [reviewStatus, onRefresh]);
+
+  if (reviewStatus === "submitted") {
+    return (
+      <div className="space-y-4 rounded-xl border border-signal/30 bg-signal-soft/20 p-5">
+        <div className="flex items-center gap-2 text-signal">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="text-sm font-semibold">Proof submitted — awaiting review</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Our team is verifying your payment. You will be notified once it is confirmed.
+        </p>
+        <button type="button" onClick={onCancel} className="text-xs font-medium text-signal underline">
+          Close
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative space-y-5">
+      {loading && <LoadingOverlay label="Uploading proof" />}
+      <AmountDue amountMwk={amountMwk} formatDisplay={formatDisplay} showPaymentNote={false} paymentCurrency="MWK" displayCurrency="MWK" />
+
+      <div className="rounded-xl border border-signal/30 bg-signal-soft/20 p-4">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">Transfer reference</p>
+        <p className="mt-1 font-mono text-xl font-semibold">{payment.manualReference ?? "—"}</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Use this exactly as the payment description or reference when you transfer.
+        </p>
+      </div>
+
+      {reviewStatus === "rejected" && (
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
+          Your previous proof was rejected
+          {payment.proofRejectionReason ? `: ${payment.proofRejectionReason}` : "."} Please upload a clearer receipt.
+        </p>
+      )}
+
+      <div className="space-y-3">
+        <p className="text-sm font-semibold">Pay to one of these accounts</p>
+        {sources.map((source) => (
+          <dl key={source.id} className="space-y-2 rounded-xl border border-hairline bg-background p-4 text-sm">
+            <p className="font-medium">{source.label}</p>
+            <Row label="Bank" value={source.bankName} />
+            <Row label="Account name" value={source.accountName} />
+            <Row label="Account number" value={source.accountNumber} mono />
+            {source.branchCode && <Row label="Branch" value={source.branchCode} />}
+            {source.swiftCode && <Row label="SWIFT" value={source.swiftCode} mono />}
+            <Row label="Currency" value={source.currency} />
+            {source.instructions && (
+              <p className="text-xs text-muted-foreground">{source.instructions}</p>
+            )}
+          </dl>
+        ))}
+      </div>
+
+      {!showUpload ? (
+        <button
+          type="button"
+          onClick={() => setShowUpload(true)}
+          className="btn-signal flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
+        >
+          <CheckCircle2 className="h-4 w-4" />
+          I&apos;ve paid
+        </button>
+      ) : (
+        <div className="space-y-3 rounded-xl border border-hairline p-4">
+          <p className="text-sm font-medium">Upload proof of payment</p>
+          <p className="text-xs text-muted-foreground">PDF or image (JPEG, PNG, WebP), max 8MB.</p>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/pdf,image/jpeg,image/png,image/webp"
+            className="block w-full text-sm"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void onSubmitProof(file);
+            }}
+          />
+          <button type="button" onClick={() => setShowUpload(false)} className="text-xs text-muted-foreground underline">
+            Cancel upload
+          </button>
+        </div>
+      )}
+
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>}
+
+      <button type="button" onClick={onCancel} className="w-full rounded-xl border border-hairline px-4 py-3 text-sm">
+        Close
+      </button>
+    </div>
+  );
+}
+
+async function fileToBase64(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]!);
+  }
+  return btoa(binary);
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

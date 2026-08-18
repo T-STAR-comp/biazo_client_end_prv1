@@ -4,7 +4,7 @@
   "sideEffects": false,
   "main": "server.cjs",
   "scripts": {
-    "dev": "vite index.vite.html",
+    "dev": "vite --port 3000 index.vite.html",
     "build": "vite build && node -e \"const fs=require('fs');const s='dist/index.vite.html';if(fs.existsSync(s))fs.copyFileSync(s,'dist/index.html');if(fs.existsSync('spa.htaccess'))fs.copyFileSync('spa.htaccess','dist/.htaccess')\"",
     "build:dev": "vite build --mode development",
     "start": "node server.cjs",

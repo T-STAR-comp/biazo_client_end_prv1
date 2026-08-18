@@ -404,10 +404,30 @@ export type FlightApplication = {
 
 export type MomoOperator = { ref_id: string; name: string; country?: string };
 
+export type ManualPaymentSource = {
+  id: string;
+  label: string;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  branchCode: string | null;
+  swiftCode: string | null;
+  currency: string;
+  instructions: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
+
 export type PaymentLedger = {
   id: string;
   chargeId: string;
-  paymentMethod: "mobile_money" | "bank" | "card" | "hosted_checkout" | "travel_credit";
+  paymentMethod:
+    | "mobile_money"
+    | "bank"
+    | "card"
+    | "hosted_checkout"
+    | "travel_credit"
+    | "manual_transfer";
   amountMwk: number;
   paymentAmount?: number;
   currency: string;
@@ -426,6 +446,11 @@ export type PaymentLedger = {
   mobileNumber: string | null;
   mobileOperatorName: string | null;
   checkoutUrl: string | null;
+  manualReference?: string | null;
+  proofReviewStatus?: "none" | "submitted" | "approved" | "rejected";
+  proofSubmittedAt?: string | null;
+  proofRejectionReason?: string | null;
+  manualPaymentSources?: ManualPaymentSource[] | null;
   expiresAt: string;
   completedAt: string | null;
   orderFulfilled: boolean;
@@ -435,6 +460,8 @@ export type PaymentLedger = {
 export type PaymentConfig = {
   checkoutMode: "direct" | "hosted";
   mockMode: boolean;
+  usePaymentGateway: boolean;
+  manualSources: ManualPaymentSource[];
 };
 
 export const paymentsApi = {
@@ -479,6 +506,16 @@ export const paymentsApi = {
       checkoutUrl?: string;
       resumed?: boolean;
     }>("/payments/travel-credits/purchase", { method: "POST", body: JSON.stringify(body) }),
+  initiateManual: (body: { applicationId: string; displayCurrency?: string }) =>
+    apiFetch<{ payment: PaymentLedger; message: string }>("/payments/manual/initiate", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  submitManualProof: (ledgerId: string, body: { fileName: string; mimeType: string; fileBase64: string }) =>
+    apiFetch<{ payment: PaymentLedger; message: string }>(`/payments/manual/${ledgerId}/proof`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 };
 
 export const applicationsApi = {
