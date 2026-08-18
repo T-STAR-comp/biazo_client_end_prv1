@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 /index.html
+/cpanel-upload
 dist-ssr
 .output
 .vinxi

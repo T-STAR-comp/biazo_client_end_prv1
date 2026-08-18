@@ -52,12 +52,14 @@ function ApplicationsPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [removingItemId, setRemovingItemId] = useState<string | null>(null);
   const [returnMessage, setReturnMessage] = useState<string | null>(null);
+  const [proofPending, setProofPending] = useState(false);
   const returnHandledRef = useRef<string | null>(null);
 
   const closeDetail = useCallback(() => {
     setSelected(null);
     setShowPay(false);
     setReturnMessage(null);
+    setProofPending(false);
   }, []);
 
   const load = useCallback(async () => {
@@ -70,6 +72,12 @@ function ApplicationsPage() {
     const data = await applicationsApi.get(id);
     setSelected(data.application);
     setShowPay(false);
+    setProofPending(false);
+    const active = await paymentsApi.getActiveForApplication(id);
+    if (active.payment?.paymentMethod === "manual_transfer" && active.payment.proofReviewStatus === "submitted") {
+      setProofPending(true);
+      setShowPay(true);
+    }
     return data.application;
   };
 
@@ -83,6 +91,7 @@ function ApplicationsPage() {
       const data = await applicationsApi.get(id);
       setSelected(data.application);
       setShowPay(false);
+      setProofPending(false);
     } finally {
       setActionLoading(false);
     }
@@ -219,7 +228,7 @@ function ApplicationsPage() {
               <div>
                 <p className="font-mono text-xs text-muted-foreground">{selected.referenceNumber}</p>
                 <h2 className="mt-1 text-xl font-semibold">{selected.originCity} → {selected.destinationCity}</h2>
-                <StatusPill status={selected.status} />
+                <StatusPill status={selected.status} proofPending={proofPending} />
               </div>
               <button type="button" onClick={closeDetail} className="text-muted-foreground hover:text-ink">✕</button>
             </div>
@@ -254,6 +263,7 @@ function ApplicationsPage() {
                     amountMwk={selected.totalPriceMwk}
                     exchangeRates={selected.quoteExchangeRates}
                     onPaid={() => onPaymentComplete(selected.id)}
+                    onProofSubmitted={() => setProofPending(true)}
                     onCancel={() => setShowPay(false)}
                   />
                 ) : selected.status === "awaiting_payment" ? (
@@ -290,10 +300,11 @@ function ApplicationsPage() {
   );
 }
 
-function StatusPill({ status }: { status: string }) {
+function StatusPill({ status, proofPending }: { status: string; proofPending?: boolean }) {
+  const label = proofPending ? "Payment proof under review" : (STATUS_LABELS[status] ?? status);
   return (
     <span className="mt-2 inline-block rounded-full bg-secondary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-      {STATUS_LABELS[status] ?? status}
+      {label}
     </span>
   );
 }

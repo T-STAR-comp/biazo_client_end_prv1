@@ -12,12 +12,13 @@ type Props = {
   amountMwk: number;
   exchangeRates?: Record<string, number>;
   onPaid: () => void;
+  onProofSubmitted?: () => void;
   onCancel: () => void;
 };
 
 type Method = "mobile_money" | "bank" | "card";
 
-export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPaid, onCancel }: Props) {
+export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPaid, onProofSubmitted, onCancel }: Props) {
   const { account } = useAuth();
   const { openTravelCredits } = useTravelCreditUi();
   const { effectiveCurrency } = useCurrency();
@@ -153,6 +154,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
 
   useEffect(() => {
     if (!payment || payment.status !== "pending") return;
+    if (payment.paymentMethod === "manual_transfer" && payment.proofReviewStatus !== "submitted") return;
     const timer = setInterval(() => {
       void pollStatus(payment.id);
     }, 5000);
@@ -312,7 +314,11 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
               mimeType: file.type || "application/octet-stream",
               fileBase64: base64,
             });
-            setPayment(result.payment);
+            setPayment({
+              ...result.payment,
+              proofReviewStatus: result.payment.proofReviewStatus ?? "submitted",
+            });
+            onProofSubmitted?.();
           } catch (err) {
             setError(err instanceof Error ? err.message : "Could not upload proof");
           } finally {
@@ -781,12 +787,14 @@ function ManualBankTransferView({
     return undefined;
   }, [reviewStatus, onRefresh]);
 
-  if (reviewStatus === "submitted") {
+  if (reviewStatus === "submitted" || reviewStatus === "approved") {
     return (
       <div className="space-y-4 rounded-xl border border-signal/30 bg-signal-soft/20 p-5">
         <div className="flex items-center gap-2 text-signal">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm font-semibold">Proof submitted - awaiting review</span>
+          <span className="text-sm font-semibold">
+            {reviewStatus === "approved" ? "Proof approved - confirming payment" : "Proof submitted - awaiting review"}
+          </span>
         </div>
         <p className="text-sm text-muted-foreground">
           Our team is verifying your payment. You will be notified once it is confirmed.
