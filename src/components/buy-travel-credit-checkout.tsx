@@ -223,11 +223,11 @@ export function BuyTravelCreditCheckout({ onComplete, onCancel }: Props) {
             <dl className="space-y-2 rounded-xl bg-background p-4 text-sm">
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Bank</dt>
-                <dd>{payment.bankDetails.bankName ?? "—"}</dd>
+                <dd>{payment.bankDetails.bankName ?? "-"}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">Account</dt>
-                <dd className="font-mono">{payment.bankDetails.accountNumber ?? "—"}</dd>
+                <dd className="font-mono">{payment.bankDetails.accountNumber ?? "-"}</dd>
               </div>
             </dl>
           )}

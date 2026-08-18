@@ -9,7 +9,7 @@ import { destinationImages, HERO_IMAGE } from "@/lib/destination-images";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Biazo — Explore Beyond the Boundaries" },
+      { title: "Biazo - Explore Beyond the Boundaries" },
       {
         name: "description",
         content:
@@ -88,7 +88,7 @@ const principles = [
   {
     icon: Shield,
     title: "Fair, transparent pricing",
-    body: "The price you see is the price you pay. Baggage, seat, taxes — surfaced upfront, always.",
+    body: "The price you see is the price you pay. Baggage, seat, taxes - surfaced upfront, always.",
   },
   {
     icon: Leaf,
@@ -111,7 +111,7 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* HERO — image fills from top, header overlays */}
+      {/* HERO - image fills from top, header overlays */}
       <section className="relative overflow-hidden">
         <div className="relative w-full">
           <div className="relative min-h-[100dvh] overflow-hidden bg-ink sm:min-h-[85vh] lg:min-h-[92vh]">
@@ -137,7 +137,7 @@ function Landing() {
                 </h1>
                 <p className="mt-4 max-w-lg text-base leading-relaxed text-white/90 sm:mt-4 sm:text-base">
                   A traveling agency for people who fly with intention. Apply for flights to
-                  any country — our team handles the rest from Lilongwe.
+                  any country - our team handles the rest from Lilongwe.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2 sm:hidden">
                   <span className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-white/95 backdrop-blur-sm">
@@ -189,13 +189,13 @@ function Landing() {
           <div className="space-y-6 text-base leading-relaxed text-muted-foreground md:text-lg">
             <p>
               Biazo started in 2019 with a small studio in Lilongwe and one stubborn
-              belief — that booking a flight should feel like the start of the trip,
+              belief - that booking a flight should feel like the start of the trip,
               not a chore that survives it. Seven years later, our team of designers,
               engineers and lifelong travellers still answer every thread ourselves.
             </p>
             <p>
               We don't sell packages. We build routes around the way you actually
-              travel — quiet mornings, long layovers with intent, the one restaurant
+              travel - quiet mornings, long layovers with intent, the one restaurant
               worth a detour. Every booking on Biazo is checked by a human before it
               goes to the airline, and every traveller gets a single concierge from
               search to landing.
@@ -243,7 +243,7 @@ function Landing() {
               </h2>
             </div>
             <p className="max-w-md text-sm text-muted-foreground">
-              These are the things every traveller can count on — no matter where
+              These are the things every traveller can count on - no matter where
               they're headed, no matter how they booked.
             </p>
           </div>

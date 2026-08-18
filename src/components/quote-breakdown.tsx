@@ -73,7 +73,7 @@ export function QuoteBreakdown({ items, totalMwk, exchangeRates, onRemove, remov
                     )}
                     {item.removable && onRemove && (
                       <p className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-                        Optional — remove if not needed
+                        Optional - remove if not needed
                       </p>
                     )}
                   </div>

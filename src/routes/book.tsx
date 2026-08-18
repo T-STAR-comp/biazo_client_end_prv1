@@ -15,7 +15,7 @@ import { Filter, Plane, SortAsc } from "lucide-react";
 export const Route = createFileRoute("/book")({
   head: () => ({
     meta: [
-      { title: "Apply for a flight — Biazo" },
+      { title: "Apply for a flight - Biazo" },
       { name: "description", content: "Apply for flights to any country with Biazo Traveling Agency." },
     ],
   }),
@@ -53,7 +53,7 @@ function Book() {
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {searched
-                    ? "Sign in to submit your application — we quote routes to any country."
+                    ? "Sign in to submit your application - we quote routes to any country."
                     : "Enter your route above. Lilongwe, Blantyre, and destinations worldwide."}
                 </p>
               </div>

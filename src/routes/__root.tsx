@@ -78,14 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Biazo — Explore Beyond the Boundaries" },
+      { title: "Biazo - Explore Beyond the Boundaries" },
       {
         name: "description",
         content:
-          "Biazo Traveling Agency — book flights, plan trips, and travel with intention. A calmer, faster way to fly.",
+          "Biazo Traveling Agency - book flights, plan trips, and travel with intention. A calmer, faster way to fly.",
       },
       { name: "author", content: "Biazo Traveling Agency" },
-      { property: "og:title", content: "Biazo — Explore Beyond the Boundaries" },
+      { property: "og:title", content: "Biazo - Explore Beyond the Boundaries" },
       {
         property: "og:description",
         content:

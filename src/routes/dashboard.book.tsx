@@ -45,7 +45,7 @@ function ApplyFlightPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-signal">Availability request</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-[-0.03em]">Apply for a flight</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Tell us what you need — Biazo checks partner airlines and sends you the best available option to approve and pay.
+          Tell us what you need - Biazo checks partner airlines and sends you the best available option to approve and pay.
         </p>
       </div>
       <FlightApplicationForm onSubmitted={setSubmittedRef} />

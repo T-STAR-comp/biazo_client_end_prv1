@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — Biazo" },
+      { title: "Terms of Service - Biazo" },
       { name: "description", content: "The terms that govern your use of Biazo Traveling Agency." },
     ],
   }),

@@ -2,6 +2,8 @@
 # Sends all traffic to the Vite build in dist/
 Options -Indexes
 
+DirectoryIndex dist/index.html
+
 RewriteEngine On
 RewriteBase /
 
@@ -12,6 +14,12 @@ RewriteBase /
 
 # Never send API requests to the SPA (avoids HTML responses for POST /api/...)
 RewriteRule ^api/ - [END]
+
+# Always use the production shell from dist/ (ignore stray root index.html)
+RewriteRule ^index\.html$ dist/index.html [L]
+
+# Block dev sources if the full repo was uploaded by mistake
+RewriteRule ^src/ - [F,L]
 
 # Serve built assets and files from dist/ when they exist
 RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f

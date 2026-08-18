@@ -3,7 +3,7 @@ export type Currency = {
   name: string;
   /** MWK per 1 unit of this currency (e.g. 1750 MWK = 1 USD) */
   mwkPerUnit: number;
-  /** ISO 4217 minor units — 0 for JPY, KRW, etc. */
+  /** ISO 4217 minor units - 0 for JPY, KRW, etc. */
   decimals: number;
 };
 

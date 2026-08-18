@@ -73,7 +73,7 @@ function Overview() {
           <p className="font-semibold text-ink">{activeApp.referenceNumber} · {activeApp.originCode} → {activeApp.destinationCode}</p>
           <p className="mt-1 text-muted-foreground">
             {activeApp.status === "awaiting_payment"
-              ? "Your quote is ready — review and pay in Applications."
+              ? "Your quote is ready - review and pay in Applications."
               : "We're processing your request. Tap for live status."}
           </p>
         </Link>

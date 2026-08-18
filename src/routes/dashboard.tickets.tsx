@@ -145,7 +145,7 @@ function TicketCard({ t, onShare }: { t: TicketType; onShare: () => void }) {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 border-t border-hairline pt-6 md:grid-cols-4">
-          <Cell k="Seat" v={t.seat ?? "—"} />
+          <Cell k="Seat" v={t.seat ?? "-"} />
           <Cell k="Gate" v={t.gate ?? "TBD"} />
           <Cell k="Class" v={t.class} />
           <Cell k="Booking" v={t.pnr ?? t.bookingId.slice(0, 8).toUpperCase()} />
@@ -206,7 +206,7 @@ function TicketCard({ t, onShare }: { t: TicketType; onShare: () => void }) {
           aria-label="Barcode"
         />
         <div className="mt-3 text-center font-mono text-[10px] tracking-[0.3em] text-muted-foreground">
-          {t.seat ?? "—"}
+          {t.seat ?? "-"}
         </div>
       </div>
     </article>

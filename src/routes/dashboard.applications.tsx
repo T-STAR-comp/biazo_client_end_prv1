@@ -24,15 +24,15 @@ const STATUS_LABELS: Record<string, string> = {
 function reassurance(app: FlightApplication) {
   const hours = differenceInHours(new Date(), new Date(app.updatedAt));
   if (["pending", "in_review"].includes(app.status) && hours >= 2) {
-    return "Hang in there — we're still working on your request and will update you soon.";
+    return "Hang in there - we're still working on your request and will update you soon.";
   }
   if (app.status === "purchasing") {
     return "Your payment is confirmed. We're purchasing your tickets with the airline now.";
   }
   if (app.status === "awaiting_payment") {
     return app.isAlternateOffer
-      ? "We found a close match with a few changes — review the quote below."
-      : "Your requested flight is available — complete payment to confirm.";
+      ? "We found a close match with a few changes - review the quote below."
+      : "Your requested flight is available - complete payment to confirm.";
   }
   return null;
 }
@@ -106,7 +106,7 @@ function ApplicationsPage() {
           search.status,
         );
         if (payment.status === "completed") {
-          setReturnMessage("Payment confirmed — thank you!");
+          setReturnMessage("Payment confirmed - thank you!");
           setShowPay(false);
           await onPaymentComplete(search.applicationId);
         } else if (
@@ -120,8 +120,8 @@ function ApplicationsPage() {
         } else if (outcome === "pending") {
           setReturnMessage(
             redirectStatus?.toLowerCase() === "success"
-              ? "PayChangu reported success — confirming with our server…"
-              : "Payment pending — we are confirming with PayChangu…",
+              ? "PayChangu reported success - confirming with our server…"
+              : "Payment pending - we are confirming with PayChangu…",
           );
           setShowPay(true);
         } else {
@@ -276,7 +276,7 @@ function ApplicationsPage() {
 
             {selected.status === "completed" && (
               <p className="mt-6 text-sm text-muted-foreground">
-                Your e-tickets are ready — view them in{" "}
+                Your e-tickets are ready - view them in{" "}
                 <a href="/dashboard/tickets" className="font-medium text-signal underline-offset-2 hover:underline">
                   My tickets
                 </a>{" "}

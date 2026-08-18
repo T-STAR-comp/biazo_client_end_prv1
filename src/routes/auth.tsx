@@ -15,7 +15,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Sign in — Biazo" },
+      { title: "Sign in - Biazo" },
       { name: "description", content: "Sign in to your Biazo account to manage flights and trips." },
     ],
   }),
@@ -181,7 +181,7 @@ function AuthPage() {
       : step === "forgot-reset"
         ? `Enter the 6-digit code sent to ${email} and choose a new password.`
         : isSignup
-          ? "Malawi's travel agency — built in Lilongwe, for the world."
+          ? "Malawi's travel agency - built in Lilongwe, for the world."
           : "Manage flights, tickets, and trips in one thread.";
 
   const eyebrow = verifying
@@ -529,7 +529,7 @@ function AuthPage() {
             &ldquo;Booking a flight should feel like the first hour of the trip, not the last hour of
             the week.&rdquo;
           </blockquote>
-          <p className="mt-4 text-sm text-white/70">— Biazo Travel, Lilongwe</p>
+          <p className="mt-4 text-sm text-white/70">- Biazo Travel, Lilongwe</p>
         </div>
       </div>
     </div>

@@ -252,7 +252,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
   if (payment?.status === "completed") {
     return (
       <div className="space-y-4 rounded-xl border border-signal/30 bg-signal-soft/30 p-5">
-        <p className="text-sm font-semibold text-signal">Payment confirmed — thank you!</p>
+        <p className="text-sm font-semibold text-signal">Payment confirmed - thank you!</p>
         <button type="button" onClick={onCancel} className="rounded-xl border border-hairline px-4 py-2.5 text-sm">
           Close
         </button>
@@ -490,7 +490,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
 
       {method === "bank" && (
         <p className="text-sm text-muted-foreground">
-          We will generate unique bank transfer details. You have 10 minutes to complete the transfer — we confirm automatically.
+          We will generate unique bank transfer details. You have 10 minutes to complete the transfer - we confirm automatically.
         </p>
       )}
 
@@ -673,9 +673,9 @@ function PendingPaymentView({
 
       {payment.bankDetails && (
         <dl className="space-y-2 rounded-xl bg-background p-4 text-sm">
-          <Row label="Bank" value={payment.bankDetails.bankName ?? "—"} />
-          <Row label="Account number" value={payment.bankDetails.accountNumber ?? "—"} mono />
-          <Row label="Account name" value={payment.bankDetails.accountName ?? "—"} />
+          <Row label="Bank" value={payment.bankDetails.bankName ?? "-"} />
+          <Row label="Account number" value={payment.bankDetails.accountNumber ?? "-"} mono />
+          <Row label="Account name" value={payment.bankDetails.accountName ?? "-"} />
         </dl>
       )}
 
@@ -786,7 +786,7 @@ function ManualBankTransferView({
       <div className="space-y-4 rounded-xl border border-signal/30 bg-signal-soft/20 p-5">
         <div className="flex items-center gap-2 text-signal">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm font-semibold">Proof submitted — awaiting review</span>
+          <span className="text-sm font-semibold">Proof submitted - awaiting review</span>
         </div>
         <p className="text-sm text-muted-foreground">
           Our team is verifying your payment. You will be notified once it is confirmed.
@@ -805,7 +805,7 @@ function ManualBankTransferView({
 
       <div className="rounded-xl border border-signal/30 bg-signal-soft/20 p-4">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">Transfer reference</p>
-        <p className="mt-1 font-mono text-xl font-semibold">{payment.manualReference ?? "—"}</p>
+        <p className="mt-1 font-mono text-xl font-semibold">{payment.manualReference ?? "-"}</p>
         <p className="mt-2 text-xs text-muted-foreground">
           Use this exactly as the payment description or reference when you transfer.
         </p>

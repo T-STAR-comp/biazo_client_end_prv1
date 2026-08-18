@@ -318,7 +318,7 @@ function SettingsPage() {
                     <SelectItem value="site-default">Use site currency ({siteCurrency})</SelectItem>
                     {currencies.map((currency) => (
                       <SelectItem key={currency.code} value={currency.code}>
-                        {currency.code} — {currency.name}
+                        {currency.code} - {currency.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

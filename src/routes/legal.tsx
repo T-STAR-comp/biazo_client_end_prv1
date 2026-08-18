@@ -6,7 +6,7 @@ import { Cookie, Database, Lock, Mail } from "lucide-react";
 export const Route = createFileRoute("/legal")({
   head: () => ({
     meta: [
-      { title: "Privacy & Legal — Biazo" },
+      { title: "Privacy & Legal - Biazo" },
       { name: "description", content: "How Biazo handles your data, and the legal notes behind it." },
     ],
   }),
@@ -17,7 +17,7 @@ const cards = [
   {
     icon: Database,
     h: "What we collect",
-    p: "Just what's needed to book a flight and keep you flying safely — name as per passport, date of birth, contact details, and payment information. We do not sell or trade your data.",
+    p: "Just what's needed to book a flight and keep you flying safely - name as per passport, date of birth, contact details, and payment information. We do not sell or trade your data.",
   },
   {
     icon: Lock,
@@ -27,7 +27,7 @@ const cards = [
   {
     icon: Cookie,
     h: "Cookies & tracking",
-    p: "Essential cookies keep you signed in and your basket intact. Analytics cookies are opt-in — you'll be asked once, and can change your mind from Settings at any time.",
+    p: "Essential cookies keep you signed in and your basket intact. Analytics cookies are opt-in - you'll be asked once, and can change your mind from Settings at any time.",
   },
   {
     icon: Mail,
@@ -49,7 +49,7 @@ function Legal() {
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
           We collect the minimum we need to book flights on your behalf, and we
-          treat that data like it belongs to us too — because in a way, it does.
+          treat that data like it belongs to us too - because in a way, it does.
         </p>
 
         <div className="mt-16 grid gap-4 md:grid-cols-2">

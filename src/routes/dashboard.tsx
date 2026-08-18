@@ -21,7 +21,7 @@ import { paymentsApi } from "@/lib/api";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Biazo" },
+      { title: "Dashboard - Biazo" },
       { name: "description", content: "Manage your flights, tickets and account with Biazo." },
     ],
   }),

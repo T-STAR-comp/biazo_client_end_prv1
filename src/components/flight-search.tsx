@@ -229,7 +229,7 @@ export function FlightSearch({
             </Field>
           ) : (
             <Field icon={<CalendarIcon className="h-4 w-4" />} label="Return">
-              <span className="text-base font-semibold text-muted-foreground">—</span>
+              <span className="text-base font-semibold text-muted-foreground">-</span>
               <span className="text-xs text-muted-foreground">One way</span>
             </Field>
           )}

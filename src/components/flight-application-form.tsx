@@ -224,7 +224,7 @@ export function FlightApplicationForm({ onSubmitted }: { onSubmitted: (ref: stri
               required
               value={carRentalRequestDetails}
               onChange={(e) => setCarRentalRequestDetails(e.target.value)}
-              placeholder="Describe what you need — e.g. SUV for 3 days, airport pickup only, drop-off at hostel, driver included…"
+              placeholder="Describe what you need - e.g. SUV for 3 days, airport pickup only, drop-off at hostel, driver included…"
               className={inputClass}
               rows={3}
             />
@@ -235,7 +235,7 @@ export function FlightApplicationForm({ onSubmitted }: { onSubmitted: (ref: stri
               required
               value={hotelRequestDetails}
               onChange={(e) => setHotelRequestDetails(e.target.value)}
-              placeholder="Describe what you need — e.g. 3-star hotel, 2 nights, twin room near city centre, breakfast included…"
+              placeholder="Describe what you need - e.g. 3-star hotel, 2 nights, twin room near city centre, breakfast included…"
               className={inputClass}
               rows={3}
             />
