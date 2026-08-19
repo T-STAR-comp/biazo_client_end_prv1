@@ -82,6 +82,9 @@ export function FlightSearch({
 
   const countryValue = selectedCountry?.value ?? countryOptions[0]?.value ?? "";
 
+  const applyButtonClass =
+    "btn-signal inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold sm:w-auto sm:min-w-[11rem] lg:min-h-[40px] lg:px-4 lg:py-2 lg:text-sm";
+
   const applyButton = stayOnPage ? (
     <button
       type="button"
@@ -92,7 +95,7 @@ export function FlightSearch({
           date: format(departDate, "yyyy-MM-dd"),
         })
       }
-      className="btn-signal col-span-full flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-semibold lg:col-span-1"
+      className={applyButtonClass}
     >
       <Plane className="h-4 w-4" />
       <span>Apply for a flight</span>
@@ -107,7 +110,7 @@ export function FlightSearch({
           date: format(departDate, "yyyy-MM-dd"),
         })
       }
-      className="btn-signal col-span-full flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-semibold lg:col-span-1"
+      className={applyButtonClass}
     >
       <Plane className="h-4 w-4" />
       <span>Apply for a flight</span>
@@ -147,7 +150,7 @@ export function FlightSearch({
         </div>
       </div>
 
-      <div className="mt-2 grid gap-2 rounded-2xl bg-background p-2 lg:grid-cols-[1fr_1fr_auto_1fr_auto]">
+      <div className="mt-2 grid gap-2 rounded-2xl bg-background p-2 lg:grid-cols-[1fr_1fr_auto_1fr]">
         {countryOptions.length > 0 && (
           <Field icon={<MapPin className="h-4 w-4" />} label="Country" className="lg:col-span-1">
             <Select value={countryValue} onValueChange={(value) => onCountryChange?.(value)}>
@@ -234,7 +237,9 @@ export function FlightSearch({
             </Field>
           )}
         </div>
+      </div>
 
+      <div className="mt-2 flex justify-stretch px-2 sm:justify-end">
         {applyButton}
       </div>
 

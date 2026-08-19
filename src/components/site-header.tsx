@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Logo } from "./logo";
 import { CurrencySelector } from "./currency-selector";
 import { useAuth } from "@/context/auth-context";
-import { useTheme } from "@/context/theme-context";
 
 const nav = [
   { to: "/", label: "Explore" },
@@ -16,7 +15,6 @@ const nav = [
 export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
 
   const linkClass = overlay
     ? "rounded-xl px-4 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10"
@@ -24,7 +22,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
 
   const activeClass = overlay ? "bg-white/15 text-white" : "nav-active font-semibold text-foreground";
 
-  const themeButtonClass = overlay
+  const menuButtonClass = overlay
     ? "text-white/90 hover:bg-white/10"
     : "text-foreground hover:bg-secondary";
 
@@ -63,15 +61,6 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className={`touch-target hidden items-center justify-center rounded-xl sm:inline-flex ${themeButtonClass}`}
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
-
             <CurrencySelector variant={overlay ? "overlay" : "default"} className="hidden sm:flex" />
 
             {isAuthenticated ? (
@@ -127,7 +116,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className={`touch-target inline-flex shrink-0 items-center justify-center rounded-xl md:hidden ${themeButtonClass}`}
+              className={`touch-target inline-flex shrink-0 items-center justify-center rounded-xl md:hidden ${menuButtonClass}`}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -159,24 +148,14 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           >
             <div className="flex h-14 items-center justify-between border-b border-hairline px-4 pr-[max(1rem,env(safe-area-inset-right))] sm:h-16">
               <Logo light={overlay} />
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="touch-target inline-flex items-center justify-center rounded-xl"
-                  aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                >
-                  {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(false)}
-                  className="touch-target inline-flex items-center justify-center rounded-xl"
-                  aria-label="Close menu"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                className="touch-target inline-flex items-center justify-center rounded-xl"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
             <nav className="flex flex-col gap-1 overflow-y-auto p-4">
               {nav.map((item) => (
