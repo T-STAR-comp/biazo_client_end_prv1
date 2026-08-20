@@ -17,6 +17,7 @@ import { TravelCreditUiProvider, useTravelCreditUi } from "@/context/travel-cred
 import { useAuth } from "@/context/auth-context";
 import { useCurrency } from "@/context/currency-context";
 import { paymentsApi } from "@/lib/api";
+import { WhatsAppHelp } from "@/components/whatsapp-help";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -30,8 +31,8 @@ export const Route = createFileRoute("/dashboard")({
 
 const nav = [
   { to: "/dashboard", label: "Overview", shortLabel: "Home", icon: Home, exact: true },
-  { to: "/dashboard/book", label: "Apply for flight", shortLabel: "Apply", icon: Search },
-  { to: "/dashboard/applications", label: "Applications", shortLabel: "Apps", icon: FileText },
+  { to: "/dashboard/book", label: "Request a quote", shortLabel: "Quote", icon: Search },
+  { to: "/dashboard/applications", label: "My flight requests", shortLabel: "Requests", icon: FileText },
   { to: "/dashboard/tickets", label: "Tickets", shortLabel: "Tickets", icon: Ticket },
   { to: "/dashboard/settings", label: "Settings", shortLabel: "Settings", icon: Settings },
 ];
@@ -205,6 +206,7 @@ function DashboardLayoutInner() {
         ))}
       </nav>
 
+      <WhatsAppHelp />
     </div>
   );
 }

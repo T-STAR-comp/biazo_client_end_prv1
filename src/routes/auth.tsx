@@ -67,6 +67,8 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   const clearErrors = () => {
     setError(null);
@@ -160,6 +162,26 @@ function AuthPage() {
     }
   };
 
+  const handleResendCode = async () => {
+    clearErrors();
+    setResendLoading(true);
+    setResendMessage(null);
+    try {
+      if (step === "verify-signup") {
+        await login(email, password);
+      } else if (step === "verify-login") {
+        await login(email, password);
+      } else if (step === "forgot-reset") {
+        await forgotPassword(email);
+      }
+      setResendMessage("A new code has been sent. Check your inbox and spam folder.");
+    } catch (err) {
+      applyApiError(err);
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   const verifying = step === "verify-signup" || step === "verify-login";
   const resetting = step === "forgot-email" || step === "forgot-reset";
   const maxBirthDate = new Date().toISOString().slice(0, 10);
@@ -175,7 +197,7 @@ function AuthPage() {
           : "Sign in to Biazo.";
 
   const subheading = verifying
-    ? `We sent a 6-digit code to ${email}. Codes expire in 15 minutes.`
+    ? `We sent a 6-digit code to ${email}. Codes expire in 15 minutes. Can't find it? Check your spam or junk folder.`
     : step === "forgot-email"
       ? "Enter your account email and we'll send a reset code."
       : step === "forgot-reset"
@@ -273,6 +295,22 @@ function AuthPage() {
                 {loading ? "Verifying…" : "Verify & continue"}
                 <ArrowRight className="h-4 w-4" />
               </button>
+              <p className="text-center text-sm text-muted-foreground">
+                Didn't get the email?{" "}
+                <button
+                  type="button"
+                  disabled={resendLoading}
+                  onClick={() => void handleResendCode()}
+                  className="font-semibold text-ink underline-offset-2 hover:text-signal hover:underline disabled:opacity-60"
+                >
+                  {resendLoading ? "Sending…" : "Send a new code"}
+                </button>
+              </p>
+              {resendMessage && (
+                <p role="status" className="rounded-xl bg-signal-soft px-4 py-3 text-sm text-ink">
+                  {resendMessage}
+                </p>
+              )}
               <button
                 type="button"
                 onClick={() => setStep("credentials")}
@@ -360,6 +398,22 @@ function AuthPage() {
                 {loading ? "Updating…" : "Update password"}
                 <ArrowRight className="h-4 w-4" />
               </button>
+              <p className="text-center text-sm text-muted-foreground">
+                Didn't get the code?{" "}
+                <button
+                  type="button"
+                  disabled={resendLoading}
+                  onClick={() => void handleResendCode()}
+                  className="font-semibold text-ink underline-offset-2 hover:text-signal hover:underline disabled:opacity-60"
+                >
+                  {resendLoading ? "Sending…" : "Send a new code"}
+                </button>
+              </p>
+              {resendMessage && (
+                <p role="status" className="rounded-xl bg-signal-soft px-4 py-3 text-sm text-ink">
+                  {resendMessage}
+                </p>
+              )}
               <button
                 type="button"
                 onClick={() => setStep("forgot-email")}

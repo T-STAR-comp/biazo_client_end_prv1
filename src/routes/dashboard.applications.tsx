@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { PaymentCheckout } from "@/components/payment-checkout";
 import { QuoteBreakdown } from "@/components/quote-breakdown";
 import { LoadingOverlay, LoadingScreen } from "@/components/loading-screen";
+import { applicationStatusLabel } from "@/lib/application-status";
 import { useAuth } from "@/context/auth-context";
 import { applicationsApi, paymentsApi, type FlightApplication } from "@/lib/api";
 
@@ -11,15 +12,6 @@ export const Route = createFileRoute("/dashboard/applications")({
   component: ApplicationsPage,
 });
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Pending review",
-  in_review: "In review",
-  awaiting_payment: "Quote ready",
-  paid: "Payment received",
-  purchasing: "Purchasing tickets",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
 
 function reassurance(app: FlightApplication) {
   const hours = differenceInHours(new Date(), new Date(app.updatedAt));
@@ -184,16 +176,16 @@ function ApplicationsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-signal">Your requests</p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-[-0.03em]">Applications</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Track availability requests, quotes, and tickets.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-signal">Your trips</p>
+        <h1 className="mt-2 text-4xl font-semibold tracking-[-0.03em]">My flight requests</h1>
+        <p className="mt-2 text-sm text-muted-foreground">See where your quote is and pay when your price is ready.</p>
       </div>
 
       {loading ? (
         <LoadingScreen label="Loading applications" />
       ) : apps.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-hairline p-10 text-center text-sm text-muted-foreground">
-          No applications yet. Submit a request from Book a flight.
+          No requests yet. Start from Request a quote in your dashboard.
         </div>
       ) : (
         <ul className="space-y-3">
@@ -269,7 +261,7 @@ function ApplicationsPage() {
                 ) : selected.status === "awaiting_payment" ? (
                   <>
                     <p className="text-xs text-muted-foreground">
-                      Remove optional add-ons above if you do not need them. Pay with travel credit or PayChangu when ready.
+                      Remove optional extras above if you don't need them. Pay by bank transfer or online when you're ready.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" disabled={actionLoading} onClick={() => setShowPay(true)} className="btn-signal rounded-xl px-5 py-2.5 text-sm font-semibold">
@@ -301,7 +293,7 @@ function ApplicationsPage() {
 }
 
 function StatusPill({ status, proofPending }: { status: string; proofPending?: boolean }) {
-  const label = proofPending ? "Payment proof under review" : (STATUS_LABELS[status] ?? status);
+  const label = applicationStatusLabel(status, proofPending);
   return (
     <span className="mt-2 inline-block rounded-full bg-secondary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
       {label}

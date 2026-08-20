@@ -5,6 +5,7 @@ import { ArrowUpRight, MapPin, Plane, Search, Ticket } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import type { Booking } from "@/lib/api";
 import { applicationsApi, type FlightApplication } from "@/lib/api";
+import { applicationStatusLabel } from "@/lib/application-status";
 
 export const Route = createFileRoute("/dashboard/")({
   component: Overview,
@@ -21,6 +22,7 @@ function Overview() {
     refreshAccount().catch(() => null);
   }, [refreshAccount]);
 
+  const quoteReady = applications.find((a) => a.status === "awaiting_payment");
   const activeApp = applications.find((a) =>
     ["pending", "in_review", "awaiting_payment", "paid", "purchasing"].includes(a.status),
   );
@@ -55,8 +57,8 @@ function Overview() {
               </>
             ) : activeApp ? (
               <>
-                {activeApp.destinationCity} application{" "}
-                <span className="text-display">{activeApp.status.replace(/_/g, " ")}.</span>
+                {activeApp.destinationCity} —{" "}
+                <span className="text-display">{applicationStatusLabel(activeApp.status)}.</span>
               </>
             ) : (
               <>Ready for your next trip?</>
@@ -65,17 +67,39 @@ function Overview() {
         </div>
       </div>
 
-      {activeApp && (
+      {quoteReady && (
+        <Link
+          to="/dashboard/applications"
+          search={{ applicationId: quoteReady.id }}
+          className="block rounded-2xl border-2 border-signal bg-signal p-6 text-signal-foreground shadow-lg transition-opacity hover:opacity-95"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] opacity-90">Action needed</p>
+          <p className="mt-2 text-2xl font-semibold tracking-[-0.02em]">Your price is ready — pay now</p>
+          <p className="mt-2 text-sm opacity-90">
+            {quoteReady.originCity} → {quoteReady.destinationCity} · {quoteReady.referenceNumber}
+          </p>
+        </Link>
+      )}
+
+      {activeApp && !quoteReady && (
         <Link
           to="/dashboard/applications"
           className="block rounded-2xl border border-signal/30 bg-signal-soft p-5 text-sm transition-colors hover:border-signal"
         >
           <p className="font-semibold text-ink">{activeApp.referenceNumber} · {activeApp.originCode} → {activeApp.destinationCode}</p>
           <p className="mt-1 text-muted-foreground">
-            {activeApp.status === "awaiting_payment"
-              ? "Your quote is ready - review and pay in Applications."
-              : "We're processing your request. Tap for live status."}
+            {applicationStatusLabel(activeApp.status)} Tap here for live updates.
           </p>
+        </Link>
+      )}
+
+      {activeApp && quoteReady && activeApp.id !== quoteReady.id && (
+        <Link
+          to="/dashboard/applications"
+          className="block rounded-2xl border border-hairline bg-surface p-5 text-sm transition-colors hover:border-signal/40"
+        >
+          <p className="font-semibold text-ink">{activeApp.referenceNumber} · {activeApp.originCode} → {activeApp.destinationCode}</p>
+          <p className="mt-1 text-muted-foreground">{applicationStatusLabel(activeApp.status)}</p>
         </Link>
       )}
 
@@ -121,16 +145,15 @@ function Overview() {
         </div>
 
         <div className="rounded-2xl border border-hairline bg-signal-soft p-6">
-          <h2 className="text-lg font-semibold tracking-[-0.02em] text-ink">Book from Malawi</h2>
+          <h2 className="text-lg font-semibold tracking-[-0.02em] text-ink">Request a quote</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Apply for flights from Lilongwe (LLW) or Chileka, Blantyre (BLZ) to any country
-            worldwide.
+            Tell us where you want to go from Lilongwe (LLW) or Blantyre (BLZ). We email you the price.
           </p>
           <Link
             to="/dashboard/book"
             className="btn-ink mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold"
           >
-            <Search className="h-3.5 w-3.5" /> Apply for a flight
+            <Search className="h-3.5 w-3.5" /> Request a quote
           </Link>
         </div>
       </div>
@@ -224,7 +247,7 @@ function EmptyUpcoming() {
         to="/dashboard/book"
         className="btn-signal mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold"
       >
-        <Search className="h-4 w-4" /> Book a flight
+        <Search className="h-4 w-4" /> Request a quote
       </Link>
     </div>
   );

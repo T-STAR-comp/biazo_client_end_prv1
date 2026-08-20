@@ -3,6 +3,8 @@ import { useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { FlightSearch } from "@/components/flight-search";
+import { HowItWorksBanner } from "@/components/how-it-works-banner";
+import { WhatsAppHelp } from "@/components/whatsapp-help";
 import {
   Sheet,
   SheetContent,
@@ -15,8 +17,8 @@ import { Filter, Plane, SortAsc } from "lucide-react";
 export const Route = createFileRoute("/book")({
   head: () => ({
     meta: [
-      { title: "Apply for a flight - Biazo" },
-      { name: "description", content: "Apply for flights to any country with Biazo Traveling Agency." },
+      { title: "Request a flight quote - Biazo" },
+      { name: "description", content: "Request a flight quote to any country with Biazo Traveling Agency." },
     ],
   }),
   component: Book,
@@ -35,10 +37,14 @@ function Book() {
             Home
           </Link>
           <span>/</span>
-          <span>Apply for a flight</span>
+          <span>Request a quote</span>
         </div>
 
-        <FlightSearch onSearch={() => setSearched(true)} stayOnPage />
+        <HowItWorksBanner compact />
+
+        <div className="mt-6">
+          <FlightSearch onSearch={() => setSearched(true)} stayOnPage />
+        </div>
 
         <div className="mt-8 grid gap-6 lg:mt-10 lg:grid-cols-[280px_1fr] lg:gap-8">
           <aside className="hidden space-y-6 lg:block">
@@ -130,6 +136,7 @@ function Book() {
         </div>
       </div>
       <SiteFooter />
+      <WhatsAppHelp />
     </div>
   );
 }

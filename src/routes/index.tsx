@@ -4,6 +4,8 @@ import { ArrowUpRight, Compass, Leaf, Shield, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { HeroFlightPanel } from "@/components/hero-flight-panel";
+import { HowItWorksBanner } from "@/components/how-it-works-banner";
+import { WhatsAppHelp } from "@/components/whatsapp-help";
 import { destinationImages, HERO_IMAGE } from "@/lib/destination-images";
 
 export const Route = createFileRoute("/")({
@@ -136,8 +138,7 @@ function Landing() {
                   the <span className="text-display text-signal">boundaries.</span>
                 </h1>
                 <p className="mt-4 max-w-lg text-base leading-relaxed text-white/90 sm:mt-4 sm:text-base">
-                  A traveling agency for people who fly with intention. Apply for flights to
-                  any country - our team handles the rest from Lilongwe.
+                  Tell us where you want to go. We find the best price and email you a quote — no payment until you say yes.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2 sm:hidden">
                   <span className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-white/95 backdrop-blur-sm">
@@ -148,7 +149,7 @@ function Landing() {
                   </span>
                 </div>
                 <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.2em] text-white/55 sm:hidden">
-                  Tap below to apply
+                  Tap below to request a quote
                 </p>
               </div>
 
@@ -171,6 +172,10 @@ function Landing() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <HowItWorksBanner />
       </section>
 
       {/* WHO IS BIAZO */}
@@ -349,6 +354,7 @@ function Landing() {
       </section>
 
       <SiteFooter />
+      <WhatsAppHelp />
     </div>
   );
 }

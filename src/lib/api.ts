@@ -543,3 +543,8 @@ export const applicationsApi = {
   ticketUrl: (applicationId: string, ticketId: string) =>
     `${getApiBase()}/applications/${applicationId}/tickets/${ticketId}`,
 };
+
+export const publicApi = {
+  getSupport: () =>
+    apiFetch<{ whatsappNumber: string; whatsappUrl: string; conciergePhone: string }>("/public/support"),
+};

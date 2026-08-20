@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { addDays, format } from "date-fns";
-import { ArrowLeftRight, CalendarIcon, MapPin, Plane, Users } from "lucide-react";
+import { ArrowLeftRight, CalendarIcon, MapPin, Plane } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useAuth } from "@/context/auth-context";
 import { useCurrency } from "@/context/currency-context";
+import { FLIGHT_LOCATION_SUGGESTIONS } from "@/lib/flight-locations";
 
-type TripType = "roundtrip" | "oneway" | "multi";
+type TripType = "roundtrip" | "oneway";
 
 type CountryOption = {
   value: string;
@@ -23,9 +17,8 @@ type CountryOption = {
 };
 
 const tripLabels: Record<TripType, { full: string; short: string }> = {
-  roundtrip: { full: "Round trip", short: "Round" },
+  roundtrip: { full: "Return trip", short: "Return" },
   oneway: { full: "One way", short: "One way" },
-  multi: { full: "Multi-city", short: "Multi" },
 };
 
 export function FlightSearch({
@@ -53,10 +46,14 @@ export function FlightSearch({
   const [returnDate, setReturnDate] = useState<Date>(addDays(new Date(), 16));
   const [departOpen, setDepartOpen] = useState(false);
   const [returnOpen, setReturnOpen] = useState(false);
+  const [countryQuery, setCountryQuery] = useState(selectedCountry?.label ?? "");
 
   useEffect(() => {
     if (selectedCountry?.from) {
       setFrom(selectedCountry.from);
+    }
+    if (selectedCountry?.label) {
+      setCountryQuery(selectedCountry.label);
     }
   }, [selectedCountry]);
 
@@ -80,7 +77,14 @@ export function FlightSearch({
     setReturnOpen(false);
   };
 
-  const countryValue = selectedCountry?.value ?? countryOptions[0]?.value ?? "";
+  const handleCountryInput = (value: string) => {
+    setCountryQuery(value);
+    const match = countryOptions.find((country) => country.label.toLowerCase() === value.toLowerCase());
+    if (match) {
+      onCountryChange?.(match.value);
+      setFrom(match.from);
+    }
+  };
 
   const applyButtonClass =
     "btn-signal inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold sm:w-auto sm:min-w-[11rem] lg:min-h-[40px] lg:px-4 lg:py-2 lg:text-sm";
@@ -98,7 +102,7 @@ export function FlightSearch({
       className={applyButtonClass}
     >
       <Plane className="h-4 w-4" />
-      <span>Apply for a flight</span>
+      <span>Request a quote</span>
     </button>
   ) : (
     <Link
@@ -113,71 +117,63 @@ export function FlightSearch({
       className={applyButtonClass}
     >
       <Plane className="h-4 w-4" />
-      <span>Apply for a flight</span>
+      <span>Request a quote</span>
     </Link>
   );
 
   return (
     <div className="glass-panel rounded-2xl p-2 sm:rounded-3xl">
-      <div className="flex flex-col gap-1 rounded-2xl bg-secondary/60 p-1 text-xs font-medium sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="flex flex-wrap gap-1">
-          {(["roundtrip", "oneway", "multi"] as const).map((key) => {
-            const inactive = key === "multi";
-            return (
-              <button
-                key={key}
-                type="button"
-                disabled={inactive}
-                onClick={() => !inactive && setTrip(key)}
-                className={`min-h-[44px] rounded-xl px-3 py-2 transition-colors sm:px-4 ${
-                  inactive
-                    ? "btn-inert"
-                    : trip === key
-                      ? "bg-background text-ink shadow-sm"
-                      : "text-muted-foreground hover:text-ink"
-                }`}
-              >
-                <span className="sm:hidden">{tripLabels[key].short}</span>
-                <span className="hidden sm:inline">{tripLabels[key].full}</span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="flex items-center gap-1 text-muted-foreground sm:ml-auto sm:pr-2">
-          <span className="btn-inert min-h-[44px] flex-1 rounded-xl px-3 py-2 sm:flex-none">Economy</span>
-          <span className="hidden h-4 w-px bg-hairline sm:block" />
-          <span className="btn-inert min-h-[44px] flex-1 rounded-xl px-3 py-2 sm:flex-none">1 pax</span>
-        </div>
+      <div className="flex flex-wrap gap-1 rounded-2xl bg-secondary/60 p-1 text-xs font-medium">
+        {(["roundtrip", "oneway"] as const).map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setTrip(key)}
+            className={`min-h-[44px] rounded-xl px-3 py-2 transition-colors sm:px-4 ${
+              trip === key ? "bg-background text-ink shadow-sm" : "text-muted-foreground hover:text-ink"
+            }`}
+          >
+            <span className="sm:hidden">{tripLabels[key].short}</span>
+            <span className="hidden sm:inline">{tripLabels[key].full}</span>
+          </button>
+        ))}
       </div>
 
       <div className="mt-2 grid gap-2 rounded-2xl bg-background p-2 lg:grid-cols-[1fr_1fr_auto_1fr]">
         {countryOptions.length > 0 && (
           <Field icon={<MapPin className="h-4 w-4" />} label="Country" className="lg:col-span-1">
-            <Select value={countryValue} onValueChange={(value) => onCountryChange?.(value)}>
-              <SelectTrigger className="h-auto min-h-[44px] border-0 bg-transparent p-0 text-base font-semibold text-ink shadow-none focus:ring-0">
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {countryOptions.map((country) => (
-                  <SelectItem key={country.value} value={country.value}>
-                    {country.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <span className="text-xs text-muted-foreground">Any country worldwide</span>
+            <input
+              list="flight-country-options"
+              value={countryQuery}
+              onChange={(e) => handleCountryInput(e.target.value)}
+              placeholder="Type or pick a country"
+              className="w-full min-h-[44px] bg-transparent text-base font-semibold text-ink outline-none"
+            />
+            <datalist id="flight-country-options">
+              {countryOptions.map((country) => (
+                <option key={country.value} value={country.label} />
+              ))}
+            </datalist>
+            <span className="text-xs text-muted-foreground">Optional - quick-fill departure airport</span>
           </Field>
         )}
 
         <div className="relative grid gap-2 sm:grid-cols-2 lg:contents">
           <Field icon={<MapPin className="h-4 w-4" />} label="From">
             <input
+              list="flight-from-options"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
+              placeholder="City or airport"
               className="w-full min-h-[44px] bg-transparent text-base font-semibold text-ink outline-none"
             />
+            <datalist id="flight-from-options">
+              {FLIGHT_LOCATION_SUGGESTIONS.map((s) => (
+                <option key={`from-${s.code}`} value={s.label} />
+              ))}
+            </datalist>
             <span className="text-xs text-muted-foreground">
-              {selectedCountry?.from ?? "Departure airport"}
+              {selectedCountry?.from ?? "Departure city or airport"}
             </span>
           </Field>
 
@@ -192,10 +188,17 @@ export function FlightSearch({
 
           <Field icon={<MapPin className="h-4 w-4" />} label="To">
             <input
+              list="flight-to-options"
               value={to}
               onChange={(e) => setTo(e.target.value)}
+              placeholder="City or airport"
               className="w-full min-h-[44px] bg-transparent text-base font-semibold text-ink outline-none"
             />
+            <datalist id="flight-to-options">
+              {FLIGHT_LOCATION_SUGGESTIONS.map((s) => (
+                <option key={`to-${s.code}`} value={s.label} />
+              ))}
+            </datalist>
             <span className="text-xs text-muted-foreground">Any destination worldwide</span>
           </Field>
         </div>
@@ -243,16 +246,8 @@ export function FlightSearch({
         {applyButton}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-3 text-[11px] text-muted-foreground sm:gap-2 sm:text-xs">
-        <Users className="h-3.5 w-3.5 shrink-0" />
-        <span className="btn-inert inline-block">Direct only</span>
-        <span className="hidden h-3 w-px bg-hairline sm:block" />
-        <span className="btn-inert hidden sm:inline">Include nearby airports</span>
-        <span className="hidden h-3 w-px bg-hairline sm:block" />
-        <span className="btn-inert hidden sm:inline">Flexible dates (±3 days)</span>
-      </div>
-      <div className="px-3 pb-3 text-[11px] text-muted-foreground sm:text-xs">
-        Prices shown in {effectiveCurrency} at bank rate.
+      <div className="px-3 pb-3 pt-2 text-xs text-muted-foreground sm:text-sm">
+        Prices shown in {effectiveCurrency} at bank rate. No payment until you approve your quote.
       </div>
     </div>
   );

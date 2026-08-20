@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Building2, CheckCircle2, CreditCard, ExternalLink, Loader2, Smartphone, Wallet } from "lucide-react";
+import { Building2, CheckCircle2, Copy, CreditCard, ExternalLink, Loader2, Smartphone, Wallet } from "lucide-react";
 import { LoadingOverlay } from "@/components/loading-screen";
 import { useAuth } from "@/context/auth-context";
 import { useTravelCreditUi } from "@/context/travel-credit-ui-context";
@@ -79,10 +79,12 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
   }, [account]);
 
   useEffect(() => {
-    if (!useGateway && !canPayWithCredit) {
+    if (!useGateway) {
       setPayMode("bank_transfer");
     } else if (canPayWithCredit) {
       setPayMode("travel_credit");
+    } else {
+      setPayMode("paychangu");
     }
   }, [canPayWithCredit, useGateway]);
 
@@ -110,7 +112,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
             }`}
           >
             <CreditCard className="h-4 w-4" />
-            PayChangu
+            Pay online
           </button>
         ) : (
           <button
@@ -200,7 +202,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
         window.location.href = url;
         return;
       }
-      setError("PayChangu did not return a checkout link. Please try again.");
+      setError("We could not start the payment page. Please try again.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed");
     } finally {
@@ -391,7 +393,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
         {payMode === "paychangu" ? (
           <>
             <p className="text-sm text-muted-foreground">
-              You will be redirected to PayChangu secure checkout to pay with mobile money, bank transfer, or card.
+              You will go to our secure payment page to pay with mobile money, bank transfer, or card.
             </p>
             {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>}
             <div className="flex gap-2">
@@ -402,7 +404,7 @@ export function PaymentCheckout({ applicationId, amountMwk, exchangeRates, onPai
                 className="btn-signal flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
               >
                 <ExternalLink className="h-4 w-4" />
-                {loading ? "Redirecting…" : "Continue to PayChangu"}
+                {loading ? "Redirecting…" : "Continue to payment"}
               </button>
               <button type="button" onClick={onCancel} className="rounded-xl border border-hairline px-4 py-3 text-sm">
                 Cancel
@@ -640,7 +642,7 @@ function PendingPaymentView({
       : payment.paymentMethod === "bank"
         ? "Bank transfer"
         : payment.paymentMethod === "hosted_checkout"
-          ? "PayChangu checkout"
+          ? "Online payment"
           : payment.paymentMethod === "travel_credit"
             ? "Travel credit"
             : payment.paymentMethod === "manual_transfer"
@@ -660,9 +662,9 @@ function PendingPaymentView({
         {payment.paymentMethod === "mobile_money" &&
           `Approve the PIN prompt on ${payment.mobileNumber ?? "your phone"}.`}
         {payment.paymentMethod === "bank" && "Transfer the exact amount to the account below."}
-        {payment.paymentMethod === "card" && "Confirming your card payment with PayChangu…"}
+        {payment.paymentMethod === "card" && "Confirming your card payment…"}
         {payment.paymentMethod === "hosted_checkout" &&
-          "Complete payment on the PayChangu checkout page. We will confirm automatically when you return."}
+          "Complete payment on the secure checkout page. We will confirm automatically when you return."}
       </p>
 
       <p className="text-lg font-semibold">{displayAmount}</p>
@@ -673,15 +675,15 @@ function PendingPaymentView({
           className="inline-flex items-center gap-2 text-sm font-medium text-signal underline-offset-2 hover:underline"
         >
           <ExternalLink className="h-4 w-4" />
-          Re-open PayChangu checkout
+          Re-open payment page
         </a>
       )}
 
       {payment.bankDetails && (
         <dl className="space-y-2 rounded-xl bg-background p-4 text-sm">
-          <Row label="Bank" value={payment.bankDetails.bankName ?? "-"} />
-          <Row label="Account number" value={payment.bankDetails.accountNumber ?? "-"} mono />
-          <Row label="Account name" value={payment.bankDetails.accountName ?? "-"} />
+          <CopyRow label="Bank" value={payment.bankDetails.bankName ?? "-"} />
+          <CopyRow label="Account number" value={payment.bankDetails.accountNumber ?? "-"} mono />
+          <CopyRow label="Account name" value={payment.bankDetails.accountName ?? "-"} />
         </dl>
       )}
 
@@ -813,9 +815,12 @@ function ManualBankTransferView({
 
       <div className="rounded-xl border border-signal/30 bg-signal-soft/20 p-4">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">Transfer reference</p>
-        <p className="mt-1 font-mono text-xl font-semibold">{payment.manualReference ?? "-"}</p>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Use this exactly as the payment description or reference when you transfer.
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <p className="font-mono text-xl font-semibold">{payment.manualReference ?? "-"}</p>
+          {payment.manualReference && <CopyButton value={payment.manualReference} label="Copy reference" />}
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Copy this reference and paste it into your bank transfer description.
         </p>
       </div>
 
@@ -831,14 +836,14 @@ function ManualBankTransferView({
         {sources.map((source) => (
           <dl key={source.id} className="space-y-2 rounded-xl border border-hairline bg-background p-4 text-sm">
             <p className="font-medium">{source.label}</p>
-            <Row label="Bank" value={source.bankName} />
-            <Row label="Account name" value={source.accountName} />
-            <Row label="Account number" value={source.accountNumber} mono />
-            {source.branchCode && <Row label="Branch" value={source.branchCode} />}
-            {source.swiftCode && <Row label="SWIFT" value={source.swiftCode} mono />}
-            <Row label="Currency" value={source.currency} />
+            <CopyRow label="Bank" value={source.bankName} />
+            <CopyRow label="Account name" value={source.accountName} />
+            <CopyRow label="Account number" value={source.accountNumber} mono />
+            {source.branchCode && <CopyRow label="Branch" value={source.branchCode} />}
+            {source.swiftCode && <CopyRow label="SWIFT" value={source.swiftCode} mono />}
+            <CopyRow label="Currency" value={source.currency} />
             {source.instructions && (
-              <p className="text-xs text-muted-foreground">{source.instructions}</p>
+              <p className="text-sm text-muted-foreground">{source.instructions}</p>
             )}
           </dl>
         ))}
@@ -855,13 +860,14 @@ function ManualBankTransferView({
         </button>
       ) : (
         <div className="space-y-3 rounded-xl border border-hairline p-4">
-          <p className="text-sm font-medium">Upload proof of payment</p>
-          <p className="text-xs text-muted-foreground">PDF or image (JPEG, PNG, WebP), max 8MB.</p>
+          <p className="text-base font-medium">Upload proof of payment</p>
+          <p className="text-sm text-muted-foreground">Take a photo of your receipt or upload a PDF. Max 8MB.</p>
           <input
             ref={fileRef}
             type="file"
             accept="application/pdf,image/jpeg,image/png,image/webp"
-            className="block w-full text-sm"
+            capture="environment"
+            className="block w-full text-base"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) void onSubmitProof(file);
@@ -898,6 +904,40 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <div className="mt-1">{children}</div>
     </label>
+  );
+}
+
+function CopyButton({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch {
+          /* ignore */
+        }
+      }}
+      className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-hairline px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-ink"
+    >
+      <Copy className="h-3.5 w-3.5" />
+      {copied ? "Copied" : label}
+    </button>
+  );
+}
+
+function CopyRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="flex items-center gap-2 text-right">
+        <span className={`font-medium ${mono ? "font-mono" : ""}`}>{value}</span>
+        <CopyButton value={value} label="Copy" />
+      </dd>
+    </div>
   );
 }
 

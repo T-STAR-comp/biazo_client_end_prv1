@@ -1,1 +1,0 @@
-function e(e){return t=>{let n=(e?Math[e]:Math.trunc)(t);return n===0?0:n}}export{e as t};
